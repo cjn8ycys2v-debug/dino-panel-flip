@@ -1461,26 +1461,26 @@
         { size: 9, moves: 8, kind: "tutorial", solution: [15, 18, 21, 55, 56, 62, 74, 80], note: "WORLD4最終。8手まで上がります" }
       ];
       const EXTRA_STAGE_CONFIGS = [
-        { size: 3, moves: 5, kind: "tutorial", solution: [1, 3, 4, 5, 7], note: "EXTRA開始。3x3でも5手はかなり重い" },
-        { size: 3, moves: 6, kind: "tutorial", solution: [0, 1, 2, 6, 7, 8], note: "上下の帯を重ねて、消える場所を見る" },
-        { size: 3, moves: 7, kind: "tutorial", solution: [0, 1, 3, 4, 5, 7, 8], note: "3x3上級。押さないマスを探す感覚" },
-        { size: 3, moves: 8, kind: "tutorial", solution: [0, 1, 2, 3, 5, 6, 7, 8], note: "1マスだけ押さない形を考えよう" },
-        { size: 3, moves: 9, kind: "tutorial", solution: [0, 1, 2, 3, 4, 5, 6, 7, 8], note: "3x3理論上限。全マス押しが答え" },
-        { size: 4, moves: 8, kind: "tutorial", solution: [0, 3, 5, 6, 9, 10, 12, 15], note: "4x4開始。角と中央の重なりを見る" },
-        { size: 4, moves: 9, kind: "tutorial", solution: [1, 2, 4, 5, 6, 7, 8, 11, 13], note: "9手問題。辺から候補を絞ろう" },
-        { size: 4, moves: 10, kind: "tutorial", solution: [0, 1, 3, 4, 6, 9, 11, 12, 14, 15], note: "10手。押す集合として全体を見る" },
-        { size: 4, moves: 11, kind: "tutorial", solution: [0, 1, 2, 4, 5, 6, 9, 10, 11, 13, 15], note: "4x4終盤。押さない5マスもヒント" },
-        { size: 4, moves: 12, kind: "tutorial", solution: [0, 1, 2, 3, 4, 7, 8, 11, 12, 13, 14, 15], note: "4x4実用上限。外周を読もう" },
-        { size: 5, moves: 7, kind: "tutorial", solution: [2, 6, 10, 12, 14, 18, 22], note: "5x5は例外盤面。7手でも油断できない" },
-        { size: 5, moves: 8, kind: "tutorial", solution: [0, 7, 11, 14, 15, 16, 22, 24], note: "5x5の8手。短縮できない形です" },
-        { size: 5, moves: 9, kind: "tutorial", solution: [6, 7, 8, 11, 12, 13, 16, 17, 18], note: "5x5理論上限。中央3x3を読む" },
-        { size: 5, moves: 9, kind: "tutorial", solution: [0, 2, 4, 10, 12, 14, 20, 22, 24], note: "5x5上限その2。対称性を頼りにする" },
-        { size: 5, moves: 9, kind: "tutorial", solution: [0, 7, 10, 12, 14, 15, 16, 21, 22], note: "5x5最終。9手の別解なし問題" },
-        { size: 6, moves: 8, kind: "tutorial", solution: [0, 5, 14, 15, 20, 21, 30, 35], note: "6x6開始。8手でも十分上級" },
-        { size: 6, moves: 9, kind: "tutorial", solution: [2, 3, 12, 14, 15, 17, 20, 21, 32], note: "9手。盤面を四分割して眺めよう" },
-        { size: 6, moves: 10, kind: "tutorial", solution: [0, 5, 7, 10, 14, 15, 20, 21, 25, 28], note: "10手。人力ではここからかなり重い" },
-        { size: 6, moves: 11, kind: "tutorial", solution: [0, 5, 7, 10, 14, 15, 20, 21, 25, 28, 30], note: "11手。差分を端から確定しよう" },
-        { size: 6, moves: 12, kind: "tutorial", solution: [1, 4, 6, 11, 13, 16, 19, 22, 24, 29, 31, 34], note: "EXTRA最終。6x6の実用上限です" }
+        { size: 3, moves: 5, kind: "tutorial", solution: [0, 1, 2, 3, 4], note: "EXTRA開始。非対称の完成図を差分で読む" },
+        { size: 3, moves: 6, kind: "tutorial", solution: [0, 1, 2, 3, 5, 6], note: "3x3でも押す集合を先に考えよう" },
+        { size: 3, moves: 7, kind: "tutorial", solution: [0, 1, 2, 3, 4, 5, 6], note: "小さい盤面ほど押さない場所がヒント" },
+        { size: 3, moves: 7, kind: "tutorial", solution: [0, 1, 2, 3, 4, 7, 8], note: "対称に見えない崩れを端から読む" },
+        { size: 3, moves: 7, kind: "tutorial", solution: [0, 2, 3, 4, 5, 7, 8], note: "3x3最終。押す順番ではなく集合を見る" },
+        { size: 4, moves: 6, kind: "tutorial", solution: [1, 2, 4, 6, 10, 13], note: "4x4開始。半数以下の手数で読ませる" },
+        { size: 4, moves: 7, kind: "tutorial", solution: [1, 2, 3, 5, 10, 12, 13], note: "7手問題。角と辺の候補を絞ろう" },
+        { size: 4, moves: 8, kind: "tutorial", solution: [0, 2, 3, 4, 6, 10, 12, 15], note: "8手。ここが4x4の上限です" },
+        { size: 4, moves: 8, kind: "tutorial", solution: [1, 2, 7, 8, 9, 12, 13, 14], note: "非対称の完成図を押さない場所から読む" },
+        { size: 4, moves: 8, kind: "tutorial", solution: [1, 2, 3, 4, 7, 9, 10, 12], note: "4x4最終。形のズレを手がかりにする" },
+        { size: 5, moves: 7, kind: "tutorial", solution: [0, 7, 11, 14, 15, 22, 24], note: "5x5は見た目より差分の崩れを見る" },
+        { size: 5, moves: 8, kind: "tutorial", solution: [2, 3, 9, 11, 12, 20, 22, 24], note: "8手。重なりで消える場所を探そう" },
+        { size: 5, moves: 9, kind: "tutorial", solution: [2, 3, 6, 8, 11, 12, 13, 15, 17], note: "9手。端から確定して中央で合わせる" },
+        { size: 5, moves: 9, kind: "tutorial", solution: [7, 9, 11, 12, 13, 16, 19, 22, 23], note: "非対称の流れを3x3の重なりで読む" },
+        { size: 5, moves: 9, kind: "tutorial", solution: [0, 6, 7, 9, 10, 12, 14, 16, 17], note: "5x5最終。9手の別解なし問題" },
+        { size: 6, moves: 8, kind: "tutorial", solution: [5, 6, 10, 15, 20, 24, 25, 27], note: "6x6開始。広い盤面を区切って読む" },
+        { size: 6, moves: 9, kind: "tutorial", solution: [3, 7, 9, 14, 15, 23, 30, 31, 33], note: "9手。差分のかたまりを分けて考える" },
+        { size: 6, moves: 10, kind: "tutorial", solution: [1, 7, 11, 14, 15, 17, 22, 25, 31, 33], note: "10手。人力ではここからかなり重い" },
+        { size: 6, moves: 11, kind: "tutorial", solution: [0, 1, 3, 4, 5, 15, 16, 18, 25, 27, 31], note: "11手。端のズレから押す集合を絞る" },
+        { size: 6, moves: 12, kind: "tutorial", solution: [5, 9, 14, 19, 20, 23, 24, 25, 26, 27, 28, 30], note: "EXTRA最終。非対称の12手問題です" }
       ];
       const WORLD_CONFIGS = [
         {
