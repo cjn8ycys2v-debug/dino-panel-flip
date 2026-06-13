@@ -614,6 +614,25 @@
       animation: hint-pulse 780ms ease-in-out infinite;
     }
 
+    .tile.no-touch-hint {
+      filter: saturate(0.88) brightness(1.04);
+      box-shadow:
+        inset 0 0 0 4px rgba(79, 159, 217, 0.92),
+        inset 0 -5px rgba(0, 0, 0, 0.13),
+        inset 0 4px rgba(255, 255, 255, 0.44),
+        0 7px 0 rgba(53, 76, 57, 0.18);
+    }
+
+    .tile.no-touch-hint::before {
+      inset: 10%;
+      opacity: 0.92;
+      background: repeating-linear-gradient(
+        45deg,
+        rgba(79, 159, 217, 0.42) 0 4px,
+        rgba(255, 255, 255, 0.25) 4px 8px
+      );
+    }
+
     .tile.mismatch {
       animation: mismatch-pulse 620ms ease-in-out infinite;
     }
@@ -1596,7 +1615,8 @@
         completed: false,
         failed: false,
         hoveredIndex: null,
-        hintIndex: null,
+        hintIndices: new Set(),
+        hintActive: false,
         lastFlipped: new Set(),
         history: [],
         flipTimer: 0,
@@ -1831,7 +1851,8 @@
         state.completed = false;
         state.failed = false;
         state.hoveredIndex = null;
-        state.hintIndex = null;
+        state.hintIndices = new Set();
+        state.hintActive = false;
         state.lastFlipped = new Set();
         state.history = [];
         window.clearTimeout(state.flipTimer);
@@ -2087,7 +2108,8 @@
         state.history.push(before);
         state.moves += 1;
         state.hoveredIndex = null;
-        state.hintIndex = null;
+        state.hintIndices = new Set();
+        state.hintActive = false;
         state.lastFlipped = new Set(flipped);
         window.clearTimeout(state.flipTimer);
         state.flipTimer = window.setTimeout(() => {
@@ -2107,12 +2129,15 @@
         if (!state.history.length || state.completed || state.failed) return;
         state.board = state.history.pop();
         state.moves = Math.max(0, state.moves - 1);
-        state.hintIndex = null;
+        state.hintIndices = new Set();
+        state.hintActive = false;
         state.lastFlipped = new Set();
         renderPlay();
       }
 
-      function retryStage() {
+      function retryStage(options = {}) {
+        const shouldCountHint = options && options.countHint === true && !state.failed && !state.completed;
+        if (shouldCountHint) incrementFailureCount();
         state.board = state.initial.slice();
         state.history = [];
         state.moves = 0;
@@ -2121,7 +2146,8 @@
         state.completed = false;
         state.failed = false;
         state.hoveredIndex = null;
-        state.hintIndex = null;
+        state.hintIndices = new Set();
+        state.hintActive = false;
         state.lastFlipped = new Set();
         window.clearTimeout(state.failTimer);
         window.clearTimeout(state.guidePulseTimer);
@@ -2134,11 +2160,11 @@
       function showHint() {
         if (state.completed || state.failed || remainingMoves() <= 0 || !hintUnlocked()) return;
         const solution = solveMinimum(state.size, currentDiff(), state.world);
-        const candidates = solution
-          ? solution.vector.map((value, index) => value ? index : -1).filter((index) => index >= 0)
+        const untouched = solution
+          ? solution.vector.map((value, index) => value ? -1 : index).filter((index) => index >= 0)
           : [];
-        if (!candidates.length) return;
-        state.hintIndex = candidates[Math.floor(Math.random() * candidates.length)];
+        state.hintIndices = new Set(untouched);
+        state.hintActive = true;
         renderPlay();
       }
 
@@ -2184,7 +2210,11 @@
       function currentGuideMessage() {
         if (state.completed) return "きれいにそろいました";
         if (state.failed) return "点滅している場所が、お題と違うパネルです";
-        if (state.hintIndex !== null) return "黄色い候補を押すと、答えに近づきます";
+        if (state.hintActive) {
+          return state.hintIndices.size
+            ? "青く光るパネルは、答えで押さない場所です"
+            : "この状態では、押さないパネルはありません";
+        }
 
         const messages = guideMessages();
         const tick = Math.floor(elapsedSeconds() / GUIDE_INTERVAL_SECONDS);
@@ -2256,7 +2286,7 @@
             `state-${value}`,
             affected.has(index) ? "affected" : "",
             state.lastFlipped.has(index) ? "flipped" : "",
-            state.hintIndex === index ? "hint" : "",
+            state.hintIndices.has(index) ? "no-touch-hint" : "",
             state.failed && value !== state.target[index] ? "mismatch" : ""
           ].filter(Boolean).join(" ");
           tile.setAttribute("aria-label", `行${Math.floor(index / state.size) + 1} 列${index % state.size + 1}`);
@@ -2329,7 +2359,7 @@
         hintButton.disabled = state.completed || state.failed || remainingMoves() <= 0 || !hintReady;
         hintButton.textContent = hintReady ? "ヒント" : `ヒント${Math.min(failures, HINT_UNLOCK_FAILURES)}/10`;
         hintButton.title = hintReady
-          ? "答えの候補を1マスだけ表示"
+          ? "答えで押さないパネルをすべて表示"
           : `${HINT_UNLOCK_FAILURES}回失敗するとヒントが使えます`;
         setGuideMessage(currentGuideMessage());
       }
@@ -2529,7 +2559,7 @@
       quickCurrentButton.addEventListener("click", () => startStage(maxUnlockedFor(state.selectedWorld), state.selectedWorld));
       backToStagesButton.addEventListener("click", () => showScreen("stage"));
       stageButton.addEventListener("click", () => showScreen("stage"));
-      retryButton.addEventListener("click", retryStage);
+      retryButton.addEventListener("click", () => retryStage({ countHint: true }));
       undoButton.addEventListener("click", undoMove);
       hintButton.addEventListener("click", showHint);
       targetZoomButton.addEventListener("click", showTargetOverlay);
