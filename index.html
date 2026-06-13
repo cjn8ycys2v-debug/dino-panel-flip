@@ -2022,9 +2022,6 @@
         hintIndices: new Set(),
         hintHighlights: emptyHintHighlights(),
         hintMessage: "",
-        hintLevel: 0,
-        hintRevealCount: 0,
-        hintSolutionTotal: 0,
         hintActive: false,
         lastFlipped: new Set(),
         tutorialStep: 0,
@@ -2181,9 +2178,6 @@
         state.hintIndices = new Set();
         state.hintHighlights = emptyHintHighlights();
         state.hintMessage = "";
-        state.hintLevel = 0;
-        state.hintRevealCount = 0;
-        state.hintSolutionTotal = 0;
         state.hintActive = false;
       }
 
@@ -2740,110 +2734,34 @@
           .sort((a, b) => b.count - a.count || a.indices.length - b.indices.length)[0];
       }
 
-      function ruleHintText() {
-        const world = worldConfig();
-        if (world.rule === "cross") {
-          return "押したマスと上下左右が動くよ。縦横のつながりを見ながら、近いところから直そう。";
-        }
-        if (world.rule === "diagonal") {
-          return "押したマスと斜め4方向が動くよ。ななめに並ぶ場所をセットで見ると考えやすいよ。";
-        }
-        return "押したマスのまわりも動くよ。重なった場所は2回ひっくり返って元に戻るよ。";
-      }
-
-      function buildNormalHint(level, solutionData) {
+      function buildNormalHint(solutionData) {
         const highlights = emptyHintHighlights();
         const { indices } = solutionData;
         if (!indices.length) {
           return { text: "今の形はもう押す場所がないみたい。お題と同じか確認してみて。", highlights };
         }
 
-        if (level === 1) {
-          highlights.area = new Set(edgeBandIndices());
-          return {
-            text: `ヒント1/4：${ruleHintText()}`,
-            highlights
-          };
-        }
-
-        if (level === 2) {
-          const area = strongestHintArea(indices);
-          highlights.area = new Set(area.indices);
-          return {
-            text: `ヒント2/4：${area.label}に注目してみよう。ここに押す場所が${area.count}つありそう。`,
-            highlights
-          };
-        }
-
-        if (level === 3) {
-          const first = indices[0];
-          highlights.area = new Set(getAffectedIndices(first));
-          highlights.confirm = new Set([first]);
-          return {
-            text: `ヒント3/4：まず${coordinateLabel(first)}を押してみよう。黄色い範囲が一緒に動くよ。`,
-            highlights
-          };
-        }
-
-        highlights.answer = new Set(indices);
+        const first = indices[0];
+        highlights.area = new Set(getAffectedIndices(first));
+        highlights.confirm = new Set([first]);
         return {
-          text: `答え表示：赤く光る${indices.length}マスが押す場所。押す順番は自由だよ。`,
+          text: `ヒント：まず${coordinateLabel(first)}を押してみよう。黄色い範囲が一緒に動くよ。`,
           highlights
         };
       }
 
-      function buildExtraHint(level, solutionData) {
+      function buildExtraHint(solutionData) {
         const highlights = emptyHintHighlights();
         const { indices } = solutionData;
         if (!indices.length) {
           return { text: "今の形はもう押す場所がないみたい。完成していないか見てみよう。", highlights };
         }
 
-        if (level === 1) {
-          highlights.area = new Set(edgeBandIndices());
-          const heavy = indices.length > state.size * state.size * 0.45;
-          return {
-            text: heavy
-              ? "ヒント1/5：押す場所が多い問題だよ。押す場所だけでなく、押さない場所も見てみよう。"
-              : "ヒント1/5：中央から急いで押さず、角と辺から候補をしぼってみよう。",
-            highlights
-          };
-        }
-
-        if (level === 2) {
-          highlights.candidate = new Set(cornerControlIndices());
-          return {
-            text: "ヒント2/5：角に影響できる押し場所は近くの4マスだけ。四隅の条件から少しずつ決めよう。",
-            highlights
-          };
-        }
-
-        if (level === 3) {
-          const area = strongestHintArea(indices);
-          highlights.area = new Set(area.indices);
-          return {
-            text: `ヒント3/5：押す場所は${area.label}に${area.count}つ。盤面全体を一気に見ず、そこを軸に考えよう。`,
-            highlights
-          };
-        }
-
-        if (level === 4) {
-          const count = Math.min(3, Math.max(1, Math.floor(indices.length / 3)));
-          const partial = indices.slice(0, count);
-          highlights.confirm = new Set(partial);
-          return {
-            text: `ヒント4/5：ここは押す場所で確定。${coordinateList(partial)}。まだ全部ではないよ。`,
-            highlights
-          };
-        }
-
-        const revealCount = Math.min(Math.max(1, state.hintRevealCount), indices.length);
-        const revealed = indices.slice(0, revealCount);
-        highlights.answer = new Set(revealed);
+        const count = Math.min(3, Math.max(1, Math.floor(indices.length / 3)));
+        const partial = indices.slice(0, count);
+        highlights.confirm = new Set(partial);
         return {
-          text: revealCount >= indices.length
-            ? `解法確認：赤く光る${indices.length}マスが押す場所。順番は自由だよ。`
-            : `解法確認 ${revealCount}/${indices.length}：${coordinateLabel(indices[revealCount - 1])}は押す場所。さらに押すと次を出すよ。`,
+          text: `EXTRAヒント：ここは押す場所で確定。${coordinateList(partial)}。まだ全部ではないよ。`,
           highlights
         };
       }
@@ -2851,21 +2769,9 @@
       function showHint() {
         if (state.completed || state.failed || remainingMoves() <= 0 || !hintUnlocked()) return;
         const solutionData = currentSolutionData();
-        const maxLevel = state.world === 5 ? 5 : 4;
-
-        if (state.hintLevel < maxLevel) {
-          state.hintLevel += 1;
-          if (state.world === 5 && state.hintLevel === maxLevel) state.hintRevealCount = 1;
-        } else if (state.world === 5) {
-          state.hintRevealCount = Math.min(solutionData.indices.length, state.hintRevealCount + 1);
-        } else {
-          state.hintRevealCount = solutionData.indices.length;
-        }
-
-        state.hintSolutionTotal = solutionData.indices.length;
         const hint = state.world === 5
-          ? buildExtraHint(state.hintLevel, solutionData)
-          : buildNormalHint(state.hintLevel, solutionData);
+          ? buildExtraHint(solutionData)
+          : buildNormalHint(solutionData);
 
         state.hintHighlights = hint.highlights;
         state.hintIndices = hint.highlights.noTouch;
@@ -3232,8 +3138,8 @@
         } else {
           messages.push(detailedGuideHint());
           messages.push(state.world === 5
-            ? "ヒントボタンは少しずつ深くなるよ。EXTRAは考える余地を残して出すよ"
-            : "ヒントボタンを押すと、考え方から答え表示まで少しずつ進むよ");
+            ? "ヒントボタンを押すと、確定している押し場所だけ少し見せるよ"
+            : "ヒントボタンを押すと、最初に押す場所だけ見せるよ");
         }
         if (world.rule === "cross") messages.push("上下左右は、縦横のつながりを見よう");
         if (world.rule === "diagonal") messages.push("斜めWORLDは、同じ色のマス同士を意識しよう");
@@ -3357,16 +3263,7 @@
 
       function hintButtonLabel(failures, hintReady) {
         if (!hintReady) return `ヒント${Math.min(failures, HINT_UNLOCK_FAILURES)}/10`;
-        if (!state.hintLevel) return "ヒント";
-        if (state.world === 5) {
-          if (state.hintLevel < 5) return `さらに${state.hintLevel}/5`;
-          if (state.hintSolutionTotal && state.hintRevealCount < state.hintSolutionTotal) {
-            return `解法${state.hintRevealCount}/${state.hintSolutionTotal}`;
-          }
-          return "解法確認";
-        }
-        if (state.hintLevel < 4) return `さらに${state.hintLevel}/4`;
-        return "答え表示";
+        return state.hintActive ? "ヒント表示中" : "ヒント";
       }
 
       function renderInfo() {
@@ -3388,8 +3285,8 @@
         hintButton.textContent = hintButtonLabel(failures, hintReady);
         hintButton.title = hintReady
           ? state.world === 5
-            ? "EXTRA用の段階ヒントを少しずつ表示"
-            : "通常ステージ用の段階ヒントを表示"
+            ? "EXTRA用ヒントを表示"
+            : "ヒントを表示"
           : `${HINT_UNLOCK_FAILURES}回チャレンジするとヒントが使えます`;
         setGuideMessage(currentGuideMessage());
       }
@@ -3451,7 +3348,7 @@
         } else {
           resultTitle.textContent = "LIMIT OVER";
           resultText.textContent = hintUnlocked()
-            ? "段階ヒントが使えるようになりました。点滅していた場所を、お題と見比べてみて。"
+            ? "ヒントが使えるようになりました。点滅していた場所を、お題と見比べてみて。"
             : `点滅していた場所を、お題と見比べてみて。ヒントまであと${HINT_UNLOCK_FAILURES - failureCountFor()}回チャレンジ。`;
           resultPrimaryButton.textContent = "リトライ";
           resultPrimaryButton.onclick = retryStage;
