@@ -1424,28 +1424,28 @@
         { size: 4, moves: 3, kind: "normal", note: "現在とお題の違う場所だけを見る" },
         { size: 5, moves: 3, kind: "tutorial", solution: [6, 8, 18], note: "広くなっても重なりの偶奇が鍵" },
         { size: 5, moves: 4, kind: "tutorial", solution: [0, 4, 20, 24], note: "外側を偶数回にして消す感覚" },
-        { size: 5, moves: 4, kind: "normal", note: "角から差分を減らしていく" },
+        { size: 5, moves: 4, kind: "normal", note: "角から違うところを減らしていこう" },
         { size: 5, moves: 5, kind: "normal", note: "3x3スタンプを重ねて整える" },
         { size: 5, moves: 6, kind: "normal", note: "5x5の本番、まだ6手まで" },
         { size: 6, moves: 4, kind: "tutorial", solution: [0, 3, 18, 21], note: "大きい盤面でも小さい形を作れる" },
         { size: 6, moves: 5, kind: "normal", note: "端から確定する練習" },
-        { size: 6, moves: 5, kind: "normal", note: "違うマスだけを差分として見る" },
+        { size: 6, moves: 5, kind: "normal", note: "お題と違うマスだけを見てみよう" },
         { size: 6, moves: 6, kind: "normal", note: "押しセットの重なりを読む" },
         { size: 6, moves: 6, kind: "normal", note: "6x6でも6手までに抑えた問題" },
         { size: 7, moves: 5, kind: "normal", note: "広い盤面はまず端から" },
         { size: 7, moves: 5, kind: "normal", note: "押す場所の集合を探す" },
         { size: 7, moves: 6, kind: "normal", note: "偶数回の場所は消える" },
-        { size: 7, moves: 6, kind: "normal", note: "差分を3x3で覆う" },
+        { size: 7, moves: 6, kind: "normal", note: "違うところを3x3で包むイメージ" },
         { size: 7, moves: 7, kind: "normal", note: "ここから7手、じっくり考える" }
       ];
       const WORLD4_STAGE_CONFIGS = [
-        { size: 8, moves: 5, kind: "tutorial", solution: [10, 20, 21, 22, 24], note: "8x8は5手から。差分を区切ろう" },
+        { size: 8, moves: 5, kind: "tutorial", solution: [10, 20, 21, 22, 24], note: "8x8は5手から。違うところを区切ろう" },
         { size: 8, moves: 5, kind: "tutorial", solution: [18, 27, 29, 30, 37], note: "大きい盤面は部分ごとに見る" },
         { size: 8, moves: 5, kind: "tutorial", solution: [1, 3, 23, 45, 53], note: "端の影響範囲を利用する" },
         { size: 8, moves: 5, kind: "tutorial", solution: [2, 25, 30, 53, 57], note: "離れた3x3の重なりを見る" },
-        { size: 8, moves: 6, kind: "tutorial", solution: [5, 9, 15, 20, 30, 36], note: "ここから6手。押す前に差分を区切ろう" },
+        { size: 8, moves: 6, kind: "tutorial", solution: [5, 9, 15, 20, 30, 36], note: "ここから6手。押す前に違うところを区切ろう" },
         { size: 8, moves: 6, kind: "tutorial", solution: [30, 31, 32, 36, 43, 48], note: "横に並ぶ反転範囲を読む" },
-        { size: 8, moves: 6, kind: "tutorial", solution: [2, 29, 31, 43, 45, 61], note: "8x8でも焦らず差分を見る" },
+        { size: 8, moves: 6, kind: "tutorial", solution: [2, 29, 31, 43, 45, 61], note: "8x8でも焦らずお題と見比べよう" },
         { size: 8, moves: 7, kind: "tutorial", solution: [1, 8, 10, 13, 19, 23, 40], note: "8x8後半。7手まで上がります" },
         { size: 8, moves: 7, kind: "tutorial", solution: [4, 39, 42, 47, 52, 54, 63], note: "広い盤面は端から整える" },
         { size: 8, moves: 7, kind: "tutorial", solution: [3, 10, 32, 37, 49, 51, 62], note: "8x8の仕上げ。7手問題" },
@@ -1455,32 +1455,32 @@
         { size: 9, moves: 6, kind: "tutorial", solution: [2, 14, 30, 50, 66, 78], note: "9x9の6手問題。中央を基準に見る" },
         { size: 9, moves: 6, kind: "tutorial", solution: [3, 23, 38, 39, 62, 72], note: "広い盤面でも6手で抑える" },
         { size: 9, moves: 6, kind: "tutorial", solution: [9, 17, 27, 53, 63, 71], note: "端と中央を分けて考える" },
-        { size: 9, moves: 7, kind: "tutorial", solution: [3, 6, 35, 41, 72, 74, 76], note: "ここから7手。差分を分割しよう" },
+        { size: 9, moves: 7, kind: "tutorial", solution: [3, 6, 35, 41, 72, 74, 76], note: "ここから7手。違うところを小分けに見よう" },
         { size: 9, moves: 7, kind: "tutorial", solution: [16, 37, 42, 50, 52, 63, 76], note: "9x9後半は押す集合を慎重に" },
         { size: 9, moves: 8, kind: "tutorial", solution: [1, 4, 23, 30, 40, 57, 60, 70], note: "最終盤だけ8手。大きく区切ろう" },
         { size: 9, moves: 8, kind: "tutorial", solution: [15, 18, 21, 55, 56, 62, 74, 80], note: "WORLD4最終。8手まで上がります" }
       ];
       const EXTRA_STAGE_CONFIGS = [
-        { size: 3, moves: 5, kind: "tutorial", solution: [0, 1, 2, 3, 4], note: "EXTRA開始。非対称の完成図を差分で読む" },
-        { size: 3, moves: 6, kind: "tutorial", solution: [0, 1, 2, 3, 5, 6], note: "3x3でも押す集合を先に考えよう" },
-        { size: 3, moves: 7, kind: "tutorial", solution: [0, 1, 2, 3, 4, 5, 6], note: "小さい盤面ほど押さない場所がヒント" },
-        { size: 3, moves: 7, kind: "tutorial", solution: [0, 1, 2, 3, 4, 7, 8], note: "対称に見えない崩れを端から読む" },
-        { size: 3, moves: 7, kind: "tutorial", solution: [0, 2, 3, 4, 5, 7, 8], note: "3x3最終。押す順番ではなく集合を見る" },
-        { size: 4, moves: 6, kind: "tutorial", solution: [1, 2, 4, 6, 10, 13], note: "4x4開始。半数以下の手数で読ませる" },
-        { size: 4, moves: 7, kind: "tutorial", solution: [1, 2, 3, 5, 10, 12, 13], note: "7手問題。角と辺の候補を絞ろう" },
-        { size: 4, moves: 8, kind: "tutorial", solution: [0, 2, 3, 4, 6, 10, 12, 15], note: "8手。ここが4x4の上限です" },
-        { size: 4, moves: 8, kind: "tutorial", solution: [1, 2, 7, 8, 9, 12, 13, 14], note: "非対称の完成図を押さない場所から読む" },
-        { size: 4, moves: 8, kind: "tutorial", solution: [1, 2, 3, 4, 7, 9, 10, 12], note: "4x4最終。形のズレを手がかりにする" },
-        { size: 5, moves: 7, kind: "tutorial", solution: [0, 7, 11, 14, 15, 22, 24], note: "5x5は見た目より差分の崩れを見る" },
-        { size: 5, moves: 8, kind: "tutorial", solution: [2, 3, 9, 11, 12, 20, 22, 24], note: "8手。重なりで消える場所を探そう" },
-        { size: 5, moves: 9, kind: "tutorial", solution: [2, 3, 6, 8, 11, 12, 13, 15, 17], note: "9手。端から確定して中央で合わせる" },
-        { size: 5, moves: 9, kind: "tutorial", solution: [7, 9, 11, 12, 13, 16, 19, 22, 23], note: "非対称の流れを3x3の重なりで読む" },
-        { size: 5, moves: 9, kind: "tutorial", solution: [0, 6, 7, 9, 10, 12, 14, 16, 17], note: "5x5最終。9手の別解なし問題" },
-        { size: 6, moves: 8, kind: "tutorial", solution: [5, 6, 10, 15, 20, 24, 25, 27], note: "6x6開始。広い盤面を区切って読む" },
-        { size: 6, moves: 9, kind: "tutorial", solution: [3, 7, 9, 14, 15, 23, 30, 31, 33], note: "9手。差分のかたまりを分けて考える" },
-        { size: 6, moves: 10, kind: "tutorial", solution: [1, 7, 11, 14, 15, 17, 22, 25, 31, 33], note: "10手。人力ではここからかなり重い" },
-        { size: 6, moves: 11, kind: "tutorial", solution: [0, 1, 3, 4, 5, 15, 16, 18, 25, 27, 31], note: "11手。端のズレから押す集合を絞る" },
-        { size: 6, moves: 12, kind: "tutorial", solution: [5, 9, 14, 19, 20, 23, 24, 25, 26, 27, 28, 30], note: "EXTRA最終。非対称の12手問題です" }
+        { size: 3, moves: 5, kind: "tutorial", solution: [0, 1, 2, 3, 4], note: "EXTRA開始。お題と違うところをまず見る", friendHint: "左上のあたりを先に見るといいよ。小さい盤面は、端の1マスがかなり大事。" },
+        { size: 3, moves: 5, kind: "tutorial", solution: [1, 3, 4, 5, 7], note: "上下左右のつり合いを使う問題です", friendHint: "真ん中を中心に、上下左右をセットで考えてみて。形がきれいなときは、反対側も一緒に見るとラク。" },
+        { size: 3, moves: 6, kind: "tutorial", solution: [0, 1, 2, 3, 5, 6], note: "3x3でも押す場所のまとまりを探そう", friendHint: "上の列と左側を少し強めに見る感じ。全部を一度に見ず、端から決めよう。" },
+        { size: 3, moves: 7, kind: "tutorial", solution: [0, 1, 2, 3, 4, 5, 6], note: "小さい盤面ほど押さない場所もヒント", friendHint: "押す場所が多いね。こういう時は、押さなくてよさそうな2マスを先に探すと見えやすいよ。" },
+        { size: 3, moves: 8, kind: "tutorial", solution: [0, 1, 2, 3, 5, 6, 7, 8], note: "対称に読める3x3の高め問題です", friendHint: "真ん中だけ仲間外れにできないか見てみよう。周りをぐるっと押す考え方だよ。" },
+        { size: 4, moves: 6, kind: "tutorial", solution: [1, 2, 4, 6, 10, 13], note: "4x4開始。端からじっくり見よう", friendHint: "左上と右上の角を先に見てみて。角を変えられるボタンは近くの4つだけだよ。" },
+        { size: 4, moves: 7, kind: "tutorial", solution: [1, 2, 3, 5, 10, 12, 13], note: "7手問題。角と辺から絞ろう", friendHint: "上の辺に注目。上のマスを変えられる場所は上2行にかたまっているよ。" },
+        { size: 4, moves: 8, kind: "tutorial", solution: [0, 2, 3, 4, 6, 10, 12, 15], note: "8手。形のズレを手がかりにしよう", friendHint: "左側と右下を別々に見よう。遠い場所は一気に直そうとしなくて大丈夫。" },
+        { size: 4, moves: 9, kind: "tutorial", solution: [1, 2, 4, 5, 6, 7, 8, 11, 13], note: "9手。横の帯と左右の端が手がかり", friendHint: "2行目をぜんぶ押す形が見えるかも。そこから上の真ん中、左右の端、下の1点を足して考えてみて。" },
+        { size: 4, moves: 9, kind: "tutorial", solution: [0, 1, 2, 3, 4, 5, 8, 10, 12], note: "斜めのつり合いで読める9手問題", friendHint: "左上から右下へ、同じ形がないか見てみよう。斜めに似た場所はセットで考えると強いよ。" },
+        { size: 5, moves: 7, kind: "tutorial", solution: [0, 7, 11, 14, 15, 22, 24], note: "5x5は見た目の崩れを小分けに見る", friendHint: "左上・中央・右下を分けて見よう。離れた場所は、別々の小さな問題にすると考えやすいよ。" },
+        { size: 5, moves: 8, kind: "tutorial", solution: [2, 3, 9, 11, 12, 20, 22, 24], note: "8手。重なって消える場所を探そう", friendHint: "3x3が重なるところは元に戻るよ。残したい場所の外側を、2回さわるように考えてみて。" },
+        { size: 5, moves: 9, kind: "tutorial", solution: [6, 7, 8, 11, 12, 13, 16, 17, 18], note: "9手。中央のまとまりで読める問題", friendHint: "真ん中の3x3をまとめて押す形だよ。まず中央だけを大きなかたまりとして見てみよう。" },
+        { size: 5, moves: 9, kind: "tutorial", solution: [4, 5, 7, 12, 13, 14, 16, 17, 21], note: "左右のつり合いを使う9手問題", friendHint: "左と右で似ているところをセットにしよう。真ん中の列は最後に合わせるくらいでOK。" },
+        { size: 5, moves: 9, kind: "tutorial", solution: [2, 3, 5, 9, 11, 12, 14, 17, 19], note: "5x5最終。斜めの流れを追おう", friendHint: "左上から右下へ流れる形を探してみて。斜めに似た場所を一緒に押すと、外側が整いやすいよ。" },
+        { size: 6, moves: 8, kind: "tutorial", solution: [5, 6, 10, 15, 20, 24, 25, 27], note: "6x6開始。広い盤面を区切って見よう", friendHint: "左半分と右半分を分けて見よう。遠くのマスまで一気に考えなくて大丈夫。" },
+        { size: 6, moves: 9, kind: "tutorial", solution: [11, 15, 17, 20, 21, 29, 31, 32, 34], note: "9手。斜めに似た形を探そう", friendHint: "左上から右下へ鏡みたいに見えるところがあるよ。似た場所をペアにして考えよう。" },
+        { size: 6, moves: 10, kind: "tutorial", solution: [1, 4, 13, 16, 20, 21, 24, 26, 27, 29], note: "10手。左右のつり合いを使う問題", friendHint: "左右で似ている列をセットに見よう。中央の2列は重なりやすいから、最後に合わせるといいよ。" },
+        { size: 6, moves: 11, kind: "tutorial", solution: [4, 10, 11, 15, 18, 19, 20, 24, 26, 31, 32], note: "11手。斜めの流れが道しるべです", friendHint: "高めの手数だけど、ちゃんと形があるよ。斜めの線を先に見つけて、端の余りをあとから足そう。" },
+        { size: 6, moves: 12, kind: "tutorial", solution: [1, 4, 6, 11, 13, 16, 19, 22, 24, 29, 31, 34], note: "EXTRA最終。対称性で読む12手問題です", friendHint: "左右も上下も似ているよ。片側で考えた押し方を、反対側にも写すつもりで組み立てよう。" }
       ];
       const WORLD_CONFIGS = [
         {
@@ -1534,12 +1534,12 @@
       const HINT_UNLOCK_FAILURES = 10;
       const GUIDE_INTERVAL_SECONDS = 5;
       const GUIDE_TIPS = [
-        "押す順番は関係ないよ",
-        "違うパネルだけを見てみよう",
-        "2回重なった場所は元に戻るよ",
-        "角と端から考えると絞れるよ",
-        "押す場所の集合を探してみよう",
-        "10回失敗するとヒントが使えるよ"
+        "押す順番は気にしなくてOKだよ",
+        "お題と違うパネルだけ、まず見てみよう",
+        "2回ひっくり返った場所は元に戻るよ",
+        "角と端は、さわれるボタンが少ないよ",
+        "次の1手より、最後に押す場所ぜんぶを想像してみよう",
+        "10回チャレンジすると、もう少し具体的に話すよ"
       ];
       const DINO_CHATS = [
         "今日のしっぽはよく動く気がする",
@@ -2209,40 +2209,61 @@
 
       function currentGuideMessage() {
         if (state.completed) return "きれいにそろいました";
-        if (state.failed) return "点滅している場所が、お題と違うパネルです";
+        if (state.failed) return "点滅している場所を見てみて。そこがお題と違うパネルだよ";
         if (state.hintActive) {
           return state.hintIndices.size
-            ? "青く光るパネルは、答えで押さない場所です"
-            : "この状態では、押さないパネルはありません";
+            ? "青く光るところは、今回は押さなくていい場所だよ"
+            : "この状態だと、押さなくていい場所はないみたい";
         }
 
         const messages = guideMessages();
         const tick = Math.floor(elapsedSeconds() / GUIDE_INTERVAL_SECONDS);
+        if (hintUnlocked() && tick > 0 && tick % 3 === 1) {
+          return detailedGuideHint();
+        }
         if (tick > 0 && tick % 4 === 3) {
           return DINO_CHATS[Math.floor(tick / 4) % DINO_CHATS.length];
         }
         return messages[tick % messages.length];
       }
 
+      function detailedGuideHint() {
+        const config = stageConfig(state.stage, state.world);
+        if (config.friendHint) return `チャッ友ヒント：${config.friendHint}`;
+        const world = worldConfig();
+        if (world.rule === "cross") {
+          return "チャッ友ヒント：上下左右だけが動くよ。まず1つの行か列にしぼって、そこから直してみよう。";
+        }
+        if (world.rule === "diagonal") {
+          return "チャッ友ヒント：斜めの4方向が動くよ。同じ色のマスがななめに並んでいないか見てみよう。";
+        }
+        if (state.size >= 8) {
+          return "チャッ友ヒント：広い盤面は、左上・右上・左下・右下に分けると急に見やすくなるよ。";
+        }
+        return "チャッ友ヒント：まず角を見てみよう。角を変えられるボタンは近くの4つだけだから、かなり絞れるよ。";
+      }
+
       function guideMessages() {
         const world = worldConfig();
+        const config = stageConfig(state.stage, state.world);
         const messages = [
-          `このWORLDでは、${world.ruleText}します`,
-          stageConfig(state.stage, state.world).note,
+          `このWORLDは、${world.ruleText}するよ`,
+          config.note,
           ...GUIDE_TIPS
         ];
 
         if (!hintUnlocked()) {
-          messages.push(`ヒント解禁まであと${HINT_UNLOCK_FAILURES - failureCountFor()}回失敗`);
+          messages.push(`あと${HINT_UNLOCK_FAILURES - failureCountFor()}回チャレンジで、チャッ友ヒントが出るよ`);
         } else {
-          messages.push("ヒントボタンで答えの候補を1マス見られるよ");
+          messages.push(detailedGuideHint());
+          messages.push("ヒントボタンを押すと、押さなくていい場所が青く光るよ");
         }
         if (world.rule === "cross") messages.push("上下左右は、行と列のつながりを見よう");
         if (world.rule === "diagonal") messages.push("斜めWORLDは、同じ色のマス同士を意識しよう");
         if (state.world === 4) messages.push("WORLD4は広いぶん、手数は控えめだよ");
-        if (state.world === 5) messages.push("EXTRAは小さい盤面ほど押さない場所も大事だよ");
+        if (state.world === 5) messages.push("EXTRAは、押す場所の形を見つけると楽しいよ");
         if (state.size >= 8) messages.push("大きい盤面は、まず四分割して眺めよう");
-        if (remainingMoves() <= 2) messages.push("残り少なめ。押す前に差分を見よう");
+        if (remainingMoves() <= 2) messages.push("残り少なめ。押す前にお題と見比べよう");
         if (state.history.length) messages.push("戻すで1手前から考え直せるよ");
         if (state.size >= 5) messages.push("広い盤面は端から見ると楽だよ");
 
@@ -2360,7 +2381,7 @@
         hintButton.textContent = hintReady ? "ヒント" : `ヒント${Math.min(failures, HINT_UNLOCK_FAILURES)}/10`;
         hintButton.title = hintReady
           ? "答えで押さないパネルをすべて表示"
-          : `${HINT_UNLOCK_FAILURES}回失敗するとヒントが使えます`;
+          : `${HINT_UNLOCK_FAILURES}回チャレンジするとヒントが使えます`;
         setGuideMessage(currentGuideMessage());
       }
 
@@ -2421,8 +2442,8 @@
         } else {
           resultTitle.textContent = "LIMIT OVER";
           resultText.textContent = hintUnlocked()
-            ? "ヒントが使えるようになりました。点滅していたパネルがお題との差分です。"
-            : `点滅していたパネルがお題との差分です。ヒント解禁まであと${HINT_UNLOCK_FAILURES - failureCountFor()}回失敗。`;
+            ? "ヒントが使えるようになりました。点滅していた場所を、お題と見比べてみて。"
+            : `点滅していた場所を、お題と見比べてみて。ヒントまであと${HINT_UNLOCK_FAILURES - failureCountFor()}回チャレンジ。`;
           resultPrimaryButton.textContent = "リトライ";
           resultPrimaryButton.onclick = retryStage;
         }
