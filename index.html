@@ -551,6 +551,13 @@
       white-space: nowrap;
     }
 
+    .tutorial-ui-focus {
+      position: relative;
+      z-index: 3;
+      border-radius: var(--radius);
+      animation: tutorial-ui-focus 980ms ease-in-out infinite;
+    }
+
     .board {
       position: relative;
       z-index: 1;
@@ -1047,6 +1054,20 @@
       }
       50% {
         transform: translateY(-4px) scale(1.025);
+      }
+    }
+
+    @keyframes tutorial-ui-focus {
+      0%,
+      100% {
+        box-shadow:
+          0 0 0 4px rgba(248, 197, 55, 0.45),
+          0 0 18px rgba(248, 197, 55, 0.24);
+      }
+      50% {
+        box-shadow:
+          0 0 0 5px rgba(248, 197, 55, 0.78),
+          0 0 24px rgba(248, 197, 55, 0.34);
       }
     }
 
@@ -1710,13 +1731,16 @@
       const remainingBanner = document.querySelector("#remainingBanner");
       const remainingValue = document.querySelector("#remainingValue");
       const targetCount = document.querySelector("#targetCount");
+      const targetSection = document.querySelector(".target-section");
       const timeValue = document.querySelector("#timeValue");
       const movesValue = document.querySelector("#movesValue");
       const shortestValue = document.querySelector("#shortestValue");
+      const infoGrid = document.querySelector(".info-grid");
       const undoButton = document.querySelector("#undoButton");
       const hintButton = document.querySelector("#hintButton");
       const retryButton = document.querySelector("#retryButton");
       const stageButton = document.querySelector("#stageButton");
+      const toolRow = document.querySelector(".tool-row");
       const stageNote = document.querySelector("#stageNote");
       const guideDino = document.querySelector(".guide-dino");
       const tutorialPanel = document.querySelector("#tutorialPanel");
@@ -2241,6 +2265,7 @@
 
       function performMove(index) {
         if (state.completed || state.failed) return;
+        const tutorialPage = currentIntroTutorialPage();
         const tutorialMove = currentIntroTutorialMove();
         const followsTutorial = tutorialMove === index;
         unlockAudio();
@@ -2254,8 +2279,7 @@
         state.hintActive = false;
         state.lastFlipped = new Set(flipped);
         if (followsTutorial) {
-          const moves = introTutorialMoves();
-          state.tutorialStep = Math.min(state.tutorialStep + 1, Math.max(0, moves.length - 1));
+          state.tutorialStep = nextTutorialStepAfterMove(tutorialPage.moveIndex);
         }
         window.clearTimeout(state.flipTimer);
         state.flipTimer = window.setTimeout(() => {
@@ -2279,7 +2303,7 @@
         state.hintActive = false;
         state.lastFlipped = new Set();
         if (isIntroTutorialStage()) {
-          state.tutorialStep = Math.min(state.tutorialStep, state.moves);
+          state.tutorialStep = tutorialStepForMoveCount(state.moves);
         }
         renderPlay();
       }
@@ -2361,26 +2385,142 @@
         return isIntroTutorialStage() && Array.isArray(config.solution) ? config.solution : [];
       }
 
-      function currentIntroTutorialMove() {
+      function introMovePage(moveIndex, lead) {
         const moves = introTutorialMoves();
-        if (!moves.length || state.completed || state.failed) return null;
-        const step = Math.min(state.tutorialStep, moves.length - 1);
-        return moves[step];
+        const move = moves[moveIndex];
+        const affectedCount = getAffectedIndices(move, state.size, state.world).length;
+        return {
+          title: `${coordinateLabel(move)}を押してみよう`,
+          text: `${lead} オレンジの枠が押す場所、青く光る${affectedCount}マスがひっくり返る場所だよ。`,
+          moveIndex
+        };
+      }
+
+      function introTutorialPages() {
+        const moves = introTutorialMoves();
+        if (!moves.length) return [];
+
+        if (state.stage === 1) {
+          return [
+            {
+              title: "目的：右のお題と同じ形にしよう",
+              text: "左の大きな盤面が今の状態。右の「お題」がゴールだよ。",
+              focus: "target",
+              moveIndex: 0
+            },
+            {
+              title: "残り手数を見よう",
+              text: "上の数字は、あと何回押せるか。0になる前にお題と同じにしよう。",
+              focus: "remaining",
+              moveIndex: 0
+            },
+            introMovePage(0, "まずは1手だけ。押したマスのまわりも一緒に変わるよ。")
+          ];
+        }
+
+        if (state.stage === 2) {
+          return [
+            {
+              title: "ルール：押すとまわりも変わる",
+              text: "WORLD1では、押したマスとそのまわり8マス、合わせて9マスがひっくり返るよ。",
+              moveIndex: 0
+            },
+            introMovePage(0, "1つ目の押す場所を見てみよう。"),
+            introMovePage(1, "2つ目。青い範囲どうしが重なる場所は、2回ひっくり返って元に戻るよ。")
+          ];
+        }
+
+        if (state.stage === 3) {
+          return [
+            {
+              title: "お題の横の数字も見よう",
+              text: "「10 / 16」みたいな数字は、お題と同じになっているパネル数だよ。",
+              focus: "target",
+              moveIndex: 0
+            },
+            introMovePage(0, "角を押すと、動く範囲は4マスだけ。端や角は考える手がかりになるよ。"),
+            introMovePage(1, "反対側の角も見てみよう。角は広がりすぎないから、動きが分かりやすいね。")
+          ];
+        }
+
+        if (state.stage === 4) {
+          return [
+            {
+              title: "時間・手数・最短の見方",
+              text: "「手数」は今押した回数。「最短」はクリアに必要な一番少ない回数だよ。",
+              focus: "info",
+              moveIndex: 0
+            },
+            introMovePage(0, "内側を押すと、9マスが大きく動くよ。"),
+            introMovePage(1, "2つの内側を押すと、重なったところだけ動きが消えるよ。")
+          ];
+        }
+
+        return [
+          {
+            title: "ボタンの見方",
+            text: "「戻す」は1手戻す。「ヒント」は10回チャレンジ後。「リトライ」は最初からやり直しだよ。",
+            focus: "tools",
+            moveIndex: 0
+          },
+          {
+            title: "押す順番は自由だよ",
+            text: "このゲームは、同じ場所を押すか押さないかが大事。順番はあとで決めても大丈夫。",
+            moveIndex: 0
+          },
+          introMovePage(0, "ここから3手。まず1つ目の押す場所を見よう。"),
+          introMovePage(1, "2つ目。青い範囲の重なり方を見ながら押してみよう。"),
+          introMovePage(2, "最後の3つ目。押す場所のセットでお題の形を作るよ。")
+        ];
+      }
+
+      function currentIntroTutorialPage() {
+        const pages = introTutorialPages();
+        if (!pages.length || state.completed || state.failed) return null;
+        const step = Math.min(state.tutorialStep, pages.length - 1);
+        return pages[step];
+      }
+
+      function currentIntroTutorialMove() {
+        const page = currentIntroTutorialPage();
+        if (!page || typeof page.moveIndex !== "number") return null;
+        const moves = introTutorialMoves();
+        return moves[page.moveIndex] ?? null;
       }
 
       function coordinateLabel(index) {
         return `${Math.floor(index / state.size) + 1}行${index % state.size + 1}列`;
       }
 
-      function introTutorialLead() {
-        const leads = {
-          1: "まずは1手だけ。押したマスのまわりも一緒に変わるよ。",
-          2: "2つの3x3が重なると、重なった場所は元に戻るよ。",
-          3: "角はひっくり返る範囲が小さめ。端の動きを見てみよう。",
-          4: "内側を押すと大きく動くよ。重なり方を見比べよう。",
-          5: "ここから3手。順番より、最後に押す場所のセットを見よう。"
+      function clearTutorialFocus() {
+        [remainingBanner, targetSection, infoGrid, toolRow].forEach((element) => {
+          element.classList.remove("tutorial-ui-focus");
+        });
+      }
+
+      function applyTutorialFocus(focus) {
+        const focusMap = {
+          remaining: remainingBanner,
+          target: targetSection,
+          info: infoGrid,
+          tools: toolRow
         };
-        return leads[state.stage] || "押す場所と、ひっくり返る場所を見てみよう。";
+        if (focusMap[focus]) focusMap[focus].classList.add("tutorial-ui-focus");
+      }
+
+      function nextTutorialStepAfterMove(moveIndex) {
+        const pages = introTutorialPages();
+        let nextStep = state.tutorialStep + 1;
+        while (nextStep < pages.length && pages[nextStep].moveIndex === moveIndex) {
+          nextStep += 1;
+        }
+        return Math.min(nextStep, Math.max(0, pages.length - 1));
+      }
+
+      function tutorialStepForMoveCount(moveCount) {
+        const pages = introTutorialPages();
+        const nextStep = pages.findIndex((page) => typeof page.moveIndex === "number" && page.moveIndex >= moveCount);
+        return nextStep >= 0 ? nextStep : Math.max(0, pages.length - 1);
       }
 
       function renderPlay() {
@@ -2390,20 +2530,21 @@
       }
 
       function renderTutorialPanel() {
-        const moves = introTutorialMoves();
-        const active = moves.length > 0 && !state.completed && !state.failed;
+        const pages = introTutorialPages();
+        const active = pages.length > 0 && !state.completed && !state.failed;
         playArea.classList.toggle("intro-tutorial", active);
         tutorialPanel.classList.toggle("hidden", !active);
+        clearTutorialFocus();
         if (!active) return;
 
-        state.tutorialStep = Math.min(Math.max(0, state.tutorialStep), moves.length - 1);
-        const move = moves[state.tutorialStep];
-        const affectedCount = getAffectedIndices(move, state.size, state.world).length;
-        tutorialTitle.textContent = `${coordinateLabel(move)}を押してみよう`;
-        tutorialText.textContent = `${introTutorialLead()} オレンジの枠が押す場所、青く光る${affectedCount}マスがひっくり返る場所だよ。`;
-        tutorialStepValue.textContent = `${state.tutorialStep + 1} / ${moves.length}`;
+        state.tutorialStep = Math.min(Math.max(0, state.tutorialStep), pages.length - 1);
+        const page = pages[state.tutorialStep];
+        applyTutorialFocus(page.focus);
+        tutorialTitle.textContent = page.title;
+        tutorialText.textContent = page.text;
+        tutorialStepValue.textContent = `${state.tutorialStep + 1} / ${pages.length}`;
         tutorialPrevButton.disabled = state.tutorialStep === 0;
-        tutorialNextButton.disabled = state.tutorialStep >= moves.length - 1;
+        tutorialNextButton.disabled = state.tutorialStep >= pages.length - 1;
       }
 
       function currentGuideMessage() {
@@ -2793,8 +2934,8 @@
         renderPlay();
       });
       tutorialNextButton.addEventListener("click", () => {
-        const moves = introTutorialMoves();
-        state.tutorialStep = Math.min(Math.max(0, moves.length - 1), state.tutorialStep + 1);
+        const pages = introTutorialPages();
+        state.tutorialStep = Math.min(Math.max(0, pages.length - 1), state.tutorialStep + 1);
         renderPlay();
       });
       targetZoomButton.addEventListener("click", showTargetOverlay);
