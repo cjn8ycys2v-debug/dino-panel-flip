@@ -1,0 +1,2330 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dino Panel Flip</title>
+  <style>
+    :root {
+      --leaf: #42b883;
+      --leaf-deep: #177b58;
+      --leaf-dark: #0d4e3c;
+      --egg: #fff6db;
+      --egg-shade: #f2d58e;
+      --coral: #f06449;
+      --coral-deep: #b83f2d;
+      --sky: #4f9fd9;
+      --sky-soft: #d9efff;
+      --sun: #f8c537;
+      --ink: #22312e;
+      --muted: #64736d;
+      --paper: #fffdf4;
+      --line: rgba(23, 123, 88, 0.22);
+      --shadow: 0 18px 34px rgba(32, 47, 43, 0.18);
+      --radius: 8px;
+      color-scheme: light;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.58) 25%, transparent 25%) 0 0 / 22px 22px,
+        linear-gradient(315deg, rgba(255, 255, 255, 0.34) 25%, transparent 25%) 0 0 / 22px 22px,
+        linear-gradient(180deg, #e4f6d6 0%, #d3eff4 52%, #f8e5ae 100%);
+      overflow: hidden;
+    }
+
+    button {
+      color: inherit;
+      font: inherit;
+    }
+
+    .app {
+      width: 100%;
+      height: 100dvh;
+      overflow: hidden;
+    }
+
+    .screen {
+      width: 100%;
+      height: 100dvh;
+      overflow: hidden;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .menu-screen {
+      display: grid;
+      place-items: center;
+      padding: clamp(14px, 3vw, 28px);
+    }
+
+    .menu-layout {
+      width: min(920px, 100%);
+      display: grid;
+      grid-template-columns: 1fr 310px;
+      gap: clamp(18px, 5vw, 46px);
+      align-items: center;
+    }
+
+    .brand {
+      min-width: 0;
+    }
+
+    .brand-row,
+    .screen-title,
+    .play-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .mascot {
+      flex: 0 0 auto;
+      width: clamp(54px, 8vw, 88px);
+      height: auto;
+      filter: drop-shadow(0 12px 12px rgba(45, 77, 56, 0.18));
+    }
+
+    h1,
+    h2,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      color: #173f35;
+      font-size: clamp(2.6rem, 8vw, 5.6rem);
+      line-height: 0.92;
+      letter-spacing: 0;
+    }
+
+    .tagline {
+      margin-top: 12px;
+      color: #42645c;
+      font-size: clamp(0.95rem, 2.4vw, 1.15rem);
+      font-weight: 850;
+    }
+
+    .menu-card,
+    .stage-shell,
+    .target-section,
+    .side-card,
+    .result-window {
+      border: 2px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 253, 244, 0.9);
+      box-shadow: var(--shadow);
+    }
+
+    .menu-card {
+      display: grid;
+      gap: 12px;
+      padding: 16px;
+    }
+
+    .progress-pill {
+      min-height: 52px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 12px;
+      padding: 0 14px;
+      border-radius: var(--radius);
+      background: #fff6db;
+      border: 2px solid rgba(248, 197, 55, 0.35);
+      color: var(--leaf-dark);
+      font-weight: 950;
+    }
+
+    .progress-pill strong {
+      color: var(--coral-deep);
+      font-size: 1.5rem;
+      line-height: 1;
+    }
+
+    .menu-button,
+    .world-tab,
+    .tool-button,
+    .stage-button,
+    .result-button,
+    .icon-button {
+      min-height: 46px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 0 13px;
+      border: 0;
+      border-radius: var(--radius);
+      background: #fffdf4;
+      box-shadow: inset 0 -4px rgba(0, 0, 0, 0.13), 0 8px 0 rgba(53, 76, 57, 0.15);
+      cursor: pointer;
+      font-weight: 950;
+      transition: transform 140ms ease, box-shadow 140ms ease, filter 140ms ease;
+    }
+
+    .menu-button.primary,
+    .result-button.primary {
+      color: #fff;
+      background: linear-gradient(145deg, #ff7c5f, var(--coral));
+    }
+
+    .menu-button.sky,
+    .tool-button.sky,
+    .result-button.sky {
+      color: #11384d;
+      background: linear-gradient(145deg, #ccecff, var(--sky-soft));
+    }
+
+    .tool-button.green {
+      color: #fff;
+      background: linear-gradient(145deg, #62d890, var(--leaf-deep));
+    }
+
+    .menu-button:hover,
+    .menu-button:focus-visible,
+    .world-tab:hover,
+    .world-tab:focus-visible,
+    .tool-button:hover,
+    .tool-button:focus-visible,
+    .stage-button:hover,
+    .stage-button:focus-visible,
+    .result-button:hover,
+    .result-button:focus-visible,
+    .icon-button:hover,
+    .icon-button:focus-visible {
+      outline: none;
+      filter: saturate(1.08);
+      transform: translateY(-2px);
+      box-shadow: inset 0 -4px rgba(0, 0, 0, 0.13), 0 11px 0 rgba(53, 76, 57, 0.14);
+    }
+
+    .menu-button:active,
+    .world-tab:active,
+    .tool-button:active,
+    .stage-button:active,
+    .result-button:active,
+    .icon-button:active {
+      transform: translateY(4px);
+      box-shadow: inset 0 -2px rgba(0, 0, 0, 0.14), 0 3px 0 rgba(53, 76, 57, 0.16);
+    }
+
+    .menu-button:disabled,
+    .world-tab:disabled,
+    .tool-button:disabled,
+    .stage-button:disabled,
+    .result-button:disabled {
+      cursor: not-allowed;
+      filter: grayscale(0.25) opacity(0.54);
+      transform: none;
+    }
+
+    .screen-header,
+    .playbar {
+      display: grid;
+      align-items: center;
+      gap: 12px;
+      width: min(1180px, calc(100vw - 20px));
+      margin: 0 auto;
+    }
+
+    .screen-header {
+      grid-template-columns: auto 1fr auto;
+      padding: 10px 0 8px;
+    }
+
+    .screen-title h2,
+    .play-title h2 {
+      color: #173f35;
+      font-size: clamp(1.35rem, 3vw, 2rem);
+      letter-spacing: 0;
+      line-height: 1;
+    }
+
+    .screen-title .mascot,
+    .play-title .mascot {
+      width: 46px;
+    }
+
+    .stage-screen {
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      padding: 0 0 10px;
+    }
+
+    .stage-shell {
+      width: min(900px, calc(100vw - 20px));
+      min-height: 0;
+      display: grid;
+      align-self: center;
+      justify-self: center;
+      gap: 12px;
+      padding: 14px;
+    }
+
+    .stage-summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      color: #42645c;
+      font-weight: 900;
+    }
+
+    .world-tabs {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 9px;
+    }
+
+    .world-tab {
+      min-height: 58px;
+      display: grid;
+      align-content: center;
+      gap: 3px;
+      padding: 8px 10px;
+      border: 2px solid rgba(23, 123, 88, 0.18);
+      box-shadow: inset 0 -4px rgba(0, 0, 0, 0.12), 0 7px 0 rgba(53, 76, 57, 0.14);
+    }
+
+    .world-tab .world-no {
+      color: #173f35;
+      font-size: 1.02rem;
+      line-height: 1;
+      font-weight: 950;
+    }
+
+    .world-tab .world-rule {
+      color: var(--muted);
+      font-size: 0.7rem;
+      font-weight: 900;
+    }
+
+    .world-tab.active {
+      color: #fff;
+      background: linear-gradient(145deg, #62d890, var(--leaf-deep));
+      border-color: rgba(23, 123, 88, 0.35);
+    }
+
+    .world-tab.active .world-no,
+    .world-tab.active .world-rule {
+      color: #fff;
+    }
+
+    .stage-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .stage-button {
+      min-height: 70px;
+      display: grid;
+      align-content: center;
+      gap: 4px;
+      padding: 8px;
+      border: 2px solid rgba(23, 123, 88, 0.18);
+      box-shadow: inset 0 -4px rgba(0, 0, 0, 0.12), 0 7px 0 rgba(53, 76, 57, 0.14);
+    }
+
+    .stage-button .stage-no {
+      color: #173f35;
+      font-size: 1.2rem;
+      line-height: 1;
+      font-weight: 950;
+    }
+
+    .stage-button .stage-meta {
+      color: var(--muted);
+      font-size: 0.75rem;
+      font-weight: 900;
+    }
+
+    .stage-button.cleared {
+      background: #e7f8d7;
+      border-color: rgba(23, 123, 88, 0.3);
+    }
+
+    .stage-button.current {
+      color: #fff;
+      background: linear-gradient(145deg, #ff7c5f, var(--coral));
+      border-color: rgba(184, 63, 45, 0.28);
+    }
+
+    .stage-button.current .stage-no,
+    .stage-button.current .stage-meta {
+      color: #fff;
+    }
+
+    .stage-button.locked {
+      background: rgba(255, 253, 244, 0.62);
+      box-shadow: inset 0 -4px rgba(0, 0, 0, 0.08);
+    }
+
+    .stage-footer {
+      width: min(900px, calc(100vw - 20px));
+      display: flex;
+      justify-content: center;
+      margin: 8px auto 0;
+    }
+
+    .play-screen {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      padding: 8px 0 10px;
+    }
+
+    .playbar {
+      grid-template-columns: auto 1fr auto;
+      min-height: 58px;
+      padding-bottom: 8px;
+    }
+
+    .icon-button {
+      width: 46px;
+      min-height: 46px;
+      padding: 0;
+      font-size: 1.5rem;
+    }
+
+    .play-title {
+      overflow: hidden;
+    }
+
+    .play-title h2 {
+      white-space: nowrap;
+    }
+
+    .stage-chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 0 10px;
+      border-radius: 999px;
+      background: rgba(255, 253, 244, 0.76);
+      color: var(--leaf-dark);
+      border: 2px solid rgba(23, 123, 88, 0.18);
+      font-size: 0.82rem;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+    .remaining-banner {
+      min-width: 152px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border: 3px solid rgba(184, 63, 45, 0.22);
+      border-radius: var(--radius);
+      background: linear-gradient(145deg, #fff1c8, #fff9df);
+      box-shadow: 0 12px 22px rgba(184, 63, 45, 0.12);
+      color: var(--coral-deep);
+      font-weight: 950;
+    }
+
+    .remaining-banner span {
+      font-size: 0.82rem;
+      white-space: nowrap;
+    }
+
+    .remaining-banner strong {
+      font-size: clamp(1.65rem, 4vw, 2.15rem);
+      line-height: 0.9;
+    }
+
+    .remaining-banner.warning {
+      animation: warning-pulse 800ms ease-in-out infinite;
+    }
+
+    .play-area {
+      position: relative;
+      width: min(1180px, calc(100vw - 20px));
+      height: 100%;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(250px, 310px);
+      gap: clamp(10px, 2vw, 18px);
+      align-items: stretch;
+      margin: 0 auto;
+      overflow: hidden;
+    }
+
+    .board-zone {
+      min-width: 0;
+      min-height: 0;
+      display: grid;
+      place-items: center;
+    }
+
+    .board-frame {
+      width: min(100%, calc(100dvh - 104px), 640px);
+      aspect-ratio: 1;
+      padding: clamp(8px, 1.6vw, 14px);
+      border: 3px solid rgba(23, 123, 88, 0.3);
+      border-radius: var(--radius);
+      background:
+        linear-gradient(180deg, rgba(255, 253, 244, 0.92), rgba(239, 248, 211, 0.9)),
+        repeating-linear-gradient(90deg, rgba(23, 123, 88, 0.08) 0 8px, transparent 8px 16px);
+      box-shadow: var(--shadow);
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(var(--size), minmax(0, 1fr));
+      gap: clamp(5px, 1vw, 9px);
+      width: 100%;
+      height: 100%;
+    }
+
+    .tile {
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: 100%;
+      min-width: 0;
+      aspect-ratio: 1;
+      border: 0;
+      border-radius: var(--radius);
+      cursor: pointer;
+      overflow: hidden;
+      transform-style: preserve-3d;
+      transition: transform 160ms ease, box-shadow 160ms ease, filter 160ms ease;
+      box-shadow: inset 0 -5px rgba(0, 0, 0, 0.13), inset 0 4px rgba(255, 255, 255, 0.44), 0 7px 0 rgba(53, 76, 57, 0.18);
+    }
+
+    .tile::before,
+    .tile::after {
+      content: "";
+      position: absolute;
+      pointer-events: none;
+    }
+
+    .tile::before {
+      inset: 9%;
+      border-radius: 7px;
+      opacity: 0.42;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.75), transparent 46%);
+    }
+
+    .tile.state-0 {
+      background:
+        radial-gradient(circle at 30% 23%, rgba(255, 255, 255, 0.5) 0 9%, transparent 10%),
+        radial-gradient(circle at 78% 82%, rgba(13, 78, 60, 0.22) 0 18%, transparent 19%),
+        linear-gradient(145deg, #55cf8a, var(--leaf) 48%, var(--leaf-deep));
+    }
+
+    .tile.state-0::after {
+      width: 42%;
+      height: 20%;
+      border-radius: 999px 999px 16px 16px;
+      border-bottom: 4px solid rgba(13, 78, 60, 0.56);
+      bottom: 23%;
+      left: 29%;
+      transform: rotate(-4deg);
+    }
+
+    .tile.state-1 {
+      background:
+        radial-gradient(circle at 28% 30%, var(--coral) 0 9%, transparent 10%),
+        radial-gradient(circle at 68% 61%, var(--coral) 0 12%, transparent 13%),
+        radial-gradient(circle at 54% 25%, rgba(79, 159, 217, 0.75) 0 8%, transparent 9%),
+        linear-gradient(145deg, #fffaf0, var(--egg) 55%, var(--egg-shade));
+    }
+
+    .tile.state-1::after {
+      inset: 15% 18%;
+      border: 3px solid rgba(112, 78, 25, 0.14);
+      border-radius: 48% 52% 46% 54%;
+      transform: rotate(-12deg);
+    }
+
+    .tile:hover,
+    .tile:focus-visible {
+      outline: none;
+      filter: saturate(1.08);
+      transform: translateY(-3px);
+      box-shadow: inset 0 -5px rgba(0, 0, 0, 0.12), inset 0 4px rgba(255, 255, 255, 0.45), 0 11px 0 rgba(53, 76, 57, 0.16);
+    }
+
+    .tile.affected {
+      box-shadow:
+        inset 0 0 0 4px rgba(79, 159, 217, 0.78),
+        inset 0 -5px rgba(0, 0, 0, 0.13),
+        inset 0 4px rgba(255, 255, 255, 0.44),
+        0 7px 0 rgba(53, 76, 57, 0.18);
+    }
+
+    .tile.flipped {
+      animation: tile-flip 300ms ease both;
+    }
+
+    .tile.hint {
+      animation: hint-pulse 780ms ease-in-out infinite;
+    }
+
+    .tile.mismatch {
+      animation: mismatch-pulse 620ms ease-in-out infinite;
+    }
+
+    .tile:disabled {
+      cursor: default;
+    }
+
+    .tile-mini {
+      border-radius: 5px;
+      cursor: default;
+      box-shadow: inset 0 -3px rgba(0, 0, 0, 0.13), inset 0 2px rgba(255, 255, 255, 0.44);
+    }
+
+    .tile-mini::after {
+      display: none;
+    }
+
+    .side-panel {
+      min-width: 0;
+      min-height: 0;
+      display: grid;
+      grid-template-rows: auto auto auto 1fr;
+      gap: 10px;
+      align-content: start;
+    }
+
+    .target-section,
+    .side-card {
+      padding: 10px;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .section-head h3 {
+      margin: 0;
+      color: #173f35;
+      font-size: 1rem;
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .target-count {
+      color: var(--muted);
+      font-size: 0.75rem;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .target-board {
+      --size: 4;
+      display: grid;
+      grid-template-columns: repeat(var(--size), minmax(0, 1fr));
+      gap: 5px;
+      width: min(100%, 220px);
+      aspect-ratio: 1;
+      margin: 0 auto;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .info-item {
+      min-height: 48px;
+      display: grid;
+      align-content: center;
+      gap: 3px;
+      padding: 7px 8px;
+      border: 2px solid rgba(79, 159, 217, 0.2);
+      border-radius: var(--radius);
+      background: rgba(255, 253, 244, 0.84);
+    }
+
+    .info-label {
+      color: var(--muted);
+      font-size: 0.66rem;
+      font-weight: 900;
+    }
+
+    .info-value {
+      color: #173f35;
+      font-size: 1.05rem;
+      font-weight: 950;
+      line-height: 1;
+    }
+
+    .tool-row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .tool-button {
+      min-height: 42px;
+      padding: 0 8px;
+      font-size: 0.88rem;
+    }
+
+    .dino-guide {
+      min-height: 76px;
+      display: grid;
+      grid-template-columns: 52px minmax(0, 1fr);
+      align-items: center;
+      gap: 10px;
+      padding: 9px 10px;
+    }
+
+    .guide-dino {
+      width: 52px;
+      height: auto;
+      filter: drop-shadow(0 6px 7px rgba(45, 77, 56, 0.18));
+    }
+
+    .guide-dino.speaking {
+      animation: dino-talk 520ms ease both;
+    }
+
+    .guide-message {
+      position: relative;
+      min-height: 46px;
+      display: flex;
+      align-items: center;
+      padding: 8px 10px;
+      border: 2px solid rgba(79, 159, 217, 0.22);
+      border-radius: var(--radius);
+      background: #fffaf0;
+      color: #345850;
+      font-size: 0.82rem;
+      font-weight: 950;
+      line-height: 1.32;
+    }
+
+    .guide-message.speaking {
+      animation: bubble-talk 440ms ease both;
+    }
+
+    .guide-message::before {
+      content: "";
+      position: absolute;
+      left: -8px;
+      top: 21px;
+      width: 12px;
+      height: 12px;
+      border-left: 2px solid rgba(79, 159, 217, 0.22);
+      border-bottom: 2px solid rgba(79, 159, 217, 0.22);
+      background: #fffaf0;
+      transform: rotate(45deg);
+    }
+
+    .result-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 20;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      background: rgba(28, 49, 43, 0.3);
+      backdrop-filter: blur(2px);
+    }
+
+    .result-window {
+      width: min(360px, 100%);
+      display: grid;
+      gap: 12px;
+      padding: 18px;
+      text-align: center;
+      animation: window-pop 220ms ease both;
+    }
+
+    .result-window h2 {
+      color: #173f35;
+      font-size: 1.7rem;
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .result-window p {
+      color: #42645c;
+      font-weight: 850;
+      line-height: 1.45;
+    }
+
+    .result-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .burst-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 25;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .confetti {
+      position: absolute;
+      width: 9px;
+      height: 14px;
+      border-radius: 2px;
+      opacity: 0;
+      animation: confetti-fall 900ms ease-out forwards;
+    }
+
+    .play-area.clear-glow .board-frame {
+      animation: board-win 640ms ease both;
+    }
+
+    @keyframes tile-flip {
+      0% {
+        transform: rotateY(0deg) translateY(0);
+      }
+      46% {
+        transform: rotateY(86deg) translateY(-2px) scale(0.96);
+      }
+      100% {
+        transform: rotateY(0deg) translateY(0);
+      }
+    }
+
+    @keyframes warning-pulse {
+      0%,
+      100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.04);
+      }
+    }
+
+    @keyframes hint-pulse {
+      0%,
+      100% {
+        filter: saturate(1);
+        box-shadow:
+          inset 0 0 0 5px rgba(248, 197, 55, 0.94),
+          inset 0 -5px rgba(0, 0, 0, 0.13),
+          inset 0 4px rgba(255, 255, 255, 0.44),
+          0 7px 0 rgba(53, 76, 57, 0.18);
+      }
+      50% {
+        filter: saturate(1.24) brightness(1.08);
+        transform: translateY(-2px) scale(1.02);
+      }
+    }
+
+    @keyframes dino-talk {
+      0%,
+      100% {
+        transform: translateY(0) rotate(0deg);
+      }
+      24% {
+        transform: translateY(-3px) rotate(-3deg);
+      }
+      52% {
+        transform: translateY(1px) rotate(2deg);
+      }
+      78% {
+        transform: translateY(-1px) rotate(-1deg);
+      }
+    }
+
+    @keyframes bubble-talk {
+      0% {
+        transform: translateY(2px) scale(0.98);
+        filter: brightness(0.98);
+      }
+      42% {
+        transform: translateY(-2px) scale(1.015);
+        filter: brightness(1.04);
+      }
+      100% {
+        transform: translateY(0) scale(1);
+        filter: brightness(1);
+      }
+    }
+
+    @keyframes mismatch-pulse {
+      0%,
+      100% {
+        box-shadow:
+          inset 0 0 0 4px rgba(240, 100, 73, 0.92),
+          inset 0 -5px rgba(0, 0, 0, 0.13),
+          inset 0 4px rgba(255, 255, 255, 0.44),
+          0 7px 0 rgba(53, 76, 57, 0.18);
+      }
+      50% {
+        box-shadow:
+          inset 0 0 0 7px rgba(248, 197, 55, 0.88),
+          inset 0 -5px rgba(0, 0, 0, 0.13),
+          inset 0 4px rgba(255, 255, 255, 0.44),
+          0 7px 0 rgba(53, 76, 57, 0.18);
+      }
+    }
+
+    @keyframes window-pop {
+      from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.96);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes board-win {
+      0%,
+      100% {
+        filter: saturate(1);
+      }
+      42% {
+        filter: saturate(1.35) brightness(1.08);
+        box-shadow: 0 0 0 8px rgba(248, 197, 55, 0.28), var(--shadow);
+      }
+    }
+
+    @keyframes confetti-fall {
+      0% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) rotate(0deg);
+      }
+      100% {
+        opacity: 0;
+        transform: translate3d(var(--dx), var(--dy), 0) rotate(var(--rot));
+      }
+    }
+
+    @media (max-width: 760px) {
+      .menu-layout {
+        grid-template-columns: 1fr;
+        gap: 18px;
+      }
+
+      .menu-card {
+        width: min(100%, 340px);
+        justify-self: center;
+      }
+
+      .screen-header {
+        grid-template-columns: auto 1fr;
+      }
+
+      .screen-header .menu-button {
+        grid-column: 1 / -1;
+      }
+
+      .stage-shell {
+        padding: 10px;
+        gap: 9px;
+      }
+
+      .stage-grid {
+        gap: 7px;
+      }
+
+      .world-tabs {
+        gap: 7px;
+      }
+
+      .world-tab {
+        min-height: 48px;
+        padding: 6px;
+      }
+
+      .world-tab .world-no {
+        font-size: 0.88rem;
+      }
+
+      .world-tab .world-rule {
+        font-size: 0.58rem;
+      }
+
+      .stage-button {
+        min-height: 58px;
+        padding: 6px;
+      }
+
+      .stage-button .stage-no {
+        font-size: 1rem;
+      }
+
+      .stage-button .stage-meta {
+        font-size: 0.64rem;
+      }
+
+      .playbar {
+        grid-template-columns: auto 1fr auto;
+        gap: 8px;
+        min-height: 52px;
+      }
+
+      .play-title .mascot {
+        display: none;
+      }
+
+      .play-title h2 {
+        font-size: 1.12rem;
+      }
+
+      .stage-chip {
+        min-height: 26px;
+        padding: 0 7px;
+        font-size: 0.72rem;
+      }
+
+      .remaining-banner {
+        min-width: 114px;
+        gap: 6px;
+        padding: 6px 8px;
+      }
+
+      .remaining-banner span {
+        font-size: 0.68rem;
+      }
+
+      .remaining-banner strong {
+        font-size: 1.55rem;
+      }
+
+      .play-area {
+        grid-template-columns: 1fr;
+        grid-template-rows: minmax(0, 1fr) auto;
+        gap: 8px;
+      }
+
+      .board-frame {
+        width: min(100%, calc(100dvh - 304px));
+        padding: 8px;
+      }
+
+      .board {
+        gap: 5px;
+      }
+
+      .side-panel {
+        grid-template-columns: 126px 1fr;
+        grid-template-rows: auto auto;
+        gap: 8px;
+      }
+
+      .target-section {
+        grid-row: 1 / span 2;
+        padding: 8px;
+      }
+
+      .target-board {
+        width: 108px;
+        gap: 4px;
+      }
+
+      .side-card {
+        padding: 8px;
+      }
+
+      .info-grid {
+        gap: 6px;
+      }
+
+      .info-item {
+        min-height: 42px;
+        padding: 5px 6px;
+      }
+
+      .info-label {
+        font-size: 0.58rem;
+      }
+
+      .info-value {
+        font-size: 0.9rem;
+      }
+
+      .tool-row {
+        gap: 6px;
+      }
+
+      .tool-button {
+        min-height: 38px;
+        font-size: 0.78rem;
+        padding: 0 5px;
+      }
+
+      .dino-guide {
+        grid-column: 1 / -1;
+        min-height: 50px;
+        grid-template-columns: 38px minmax(0, 1fr);
+        gap: 8px;
+        padding: 6px 8px;
+      }
+
+      .guide-dino {
+        width: 38px;
+      }
+
+      .guide-message {
+        min-height: 36px;
+        padding: 5px 8px;
+        font-size: 0.72rem;
+        line-height: 1.24;
+      }
+
+      .guide-message::before {
+        top: 15px;
+      }
+    }
+
+    @media (max-width: 430px) {
+      .play-area,
+      .playbar,
+      .screen-header,
+      .stage-shell,
+      .stage-footer {
+        width: calc(100vw - 14px);
+      }
+
+      .side-panel {
+        grid-template-columns: 112px 1fr;
+      }
+
+      .target-board {
+        width: 94px;
+      }
+
+      .result-window {
+        padding: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section id="menuScreen" class="screen menu-screen" aria-label="メインメニュー">
+      <div class="menu-layout">
+        <div class="brand">
+          <div class="brand-row">
+            <svg class="mascot" viewBox="0 0 96 96" role="img" aria-label="Green dinosaur and egg mark">
+              <path d="M56 7c15 0 27 11 27 26 0 12-8 22-19 25l4 16c1 5-3 10-8 10H23c-6 0-10-6-8-11l7-23c-5-4-8-10-8-17C14 18 27 7 43 7h13Z" fill="#42b883"/>
+              <path d="M20 34c0-13 10-22 23-22h11c13 0 23 9 23 21 0 13-10 22-23 22H42c-13 0-22-9-22-21Z" fill="#55cf8a"/>
+              <circle cx="58" cy="30" r="5" fill="#15352f"/>
+              <circle cx="60" cy="28" r="1.5" fill="#fff"/>
+              <path d="M34 41c8 7 20 7 28 0" fill="none" stroke="#0d4e3c" stroke-width="4" stroke-linecap="round"/>
+              <path d="M24 77c3-18 13-29 26-29s23 11 26 29c1 6-4 12-10 12H34c-6 0-11-6-10-12Z" fill="#fff6db" stroke="#e4c877" stroke-width="3"/>
+              <circle cx="47" cy="64" r="7" fill="#f06449"/>
+              <circle cx="61" cy="78" r="8" fill="#f06449"/>
+              <circle cx="37" cy="80" r="5" fill="#4f9fd9"/>
+            </svg>
+            <h1>Dino Panel Flip</h1>
+          </div>
+          <p class="tagline">WORLDごとに変わる反転ルールで、きれいな模様へ戻すパネルパズル</p>
+        </div>
+
+        <div class="menu-card">
+          <div class="progress-pill">
+            <span>選択中</span>
+            <strong id="menuStageValue">S1</strong>
+          </div>
+          <button id="startButton" class="menu-button primary" type="button">はじめる</button>
+          <button id="selectButton" class="menu-button sky" type="button">ステージ選択</button>
+          <button id="resetProgressButton" class="menu-button" type="button">記録リセット</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="stageScreen" class="screen stage-screen hidden" aria-label="ステージ選択">
+      <header class="screen-header">
+        <div class="screen-title">
+          <svg class="mascot" viewBox="0 0 96 96" aria-hidden="true">
+            <path d="M56 7c15 0 27 11 27 26 0 12-8 22-19 25l4 16c1 5-3 10-8 10H23c-6 0-10-6-8-11l7-23c-5-4-8-10-8-17C14 18 27 7 43 7h13Z" fill="#42b883"/>
+            <path d="M20 34c0-13 10-22 23-22h11c13 0 23 9 23 21 0 13-10 22-23 22H42c-13 0-22-9-22-21Z" fill="#55cf8a"/>
+            <circle cx="58" cy="30" r="5" fill="#15352f"/>
+            <path d="M34 41c8 7 20 7 28 0" fill="none" stroke="#0d4e3c" stroke-width="4" stroke-linecap="round"/>
+          </svg>
+          <h2>Stage Select</h2>
+        </div>
+        <span id="stageSummary" class="stage-chip">S1 open</span>
+        <button id="homeFromStagesButton" class="menu-button" type="button">メニュー</button>
+      </header>
+
+      <div class="stage-shell">
+        <div id="worldTabs" class="world-tabs" role="tablist" aria-label="ワールド選択"></div>
+        <div class="stage-summary">
+          <span>各WORLDのSTAGE1は最初から選べます</span>
+          <span id="unlockedSummary">S1</span>
+        </div>
+        <div id="stageGrid" class="stage-grid"></div>
+      </div>
+
+      <div class="stage-footer">
+        <button id="quickCurrentButton" class="menu-button primary" type="button">挑戦中へ</button>
+      </div>
+    </section>
+
+    <section id="playScreen" class="screen play-screen hidden" aria-label="プレイ画面">
+      <header class="playbar">
+        <button id="backToStagesButton" class="icon-button" type="button" title="ステージ選択へ">‹</button>
+        <div class="play-title">
+          <svg class="mascot" viewBox="0 0 96 96" aria-hidden="true">
+            <path d="M56 7c15 0 27 11 27 26 0 12-8 22-19 25l4 16c1 5-3 10-8 10H23c-6 0-10-6-8-11l7-23c-5-4-8-10-8-17C14 18 27 7 43 7h13Z" fill="#42b883"/>
+            <path d="M20 34c0-13 10-22 23-22h11c13 0 23 9 23 21 0 13-10 22-23 22H42c-13 0-22-9-22-21Z" fill="#55cf8a"/>
+            <circle cx="58" cy="30" r="5" fill="#15352f"/>
+            <path d="M34 41c8 7 20 7 28 0" fill="none" stroke="#0d4e3c" stroke-width="4" stroke-linecap="round"/>
+          </svg>
+          <h2>WORLD <span id="worldValue">1</span> - STAGE <span id="stageValue">1</span></h2>
+          <span id="sizeValue" class="stage-chip">4x4</span>
+          <span id="ruleValue" class="stage-chip">9マス</span>
+        </div>
+        <div id="remainingBanner" class="remaining-banner">
+          <span>残り手数</span>
+          <strong id="remainingValue">0</strong>
+        </div>
+      </header>
+
+      <section id="playArea" class="play-area">
+        <div class="board-zone">
+          <div class="board-frame">
+            <div id="board" class="board" aria-label="現在の盤面"></div>
+          </div>
+        </div>
+
+        <aside class="side-panel" aria-label="ゲーム情報">
+          <section class="target-section" aria-label="お題">
+            <div class="section-head">
+              <h3>お題</h3>
+              <span id="targetCount" class="target-count">0 / 0</span>
+            </div>
+            <div id="targetBoard" class="target-board" aria-hidden="true"></div>
+          </section>
+
+          <div class="side-card">
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="info-label">時間</span>
+                <span id="timeValue" class="info-value">0:00</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">手数</span>
+                <span id="movesValue" class="info-value">0</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">最短</span>
+                <span id="shortestValue" class="info-value">0</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="side-card">
+            <div class="tool-row">
+              <button id="undoButton" class="tool-button sky" type="button">戻す</button>
+              <button id="hintButton" class="tool-button" type="button">ヒント</button>
+              <button id="retryButton" class="tool-button" type="button">リトライ</button>
+              <button id="stageButton" class="tool-button green" type="button">選択</button>
+            </div>
+          </div>
+
+          <div class="side-card dino-guide" aria-label="恐竜くんのヒント">
+            <svg class="guide-dino" viewBox="0 0 96 96" aria-hidden="true">
+              <path d="M55 8c15 0 27 11 27 26 0 13-9 23-21 26l5 14c2 6-3 12-9 12H27c-7 0-12-6-10-13l6-19c-5-4-8-10-8-18C15 20 29 8 45 8h10Z" fill="#42b883"/>
+              <path d="M22 35c0-13 10-22 23-22h10c12 0 21 9 21 21 0 13-10 22-23 22H44c-13 0-22-9-22-21Z" fill="#63d890"/>
+              <circle cx="59" cy="31" r="5" fill="#15352f"/>
+              <circle cx="61" cy="29" r="1.5" fill="#fff"/>
+              <path d="M35 42c8 7 20 7 28 0" fill="none" stroke="#0d4e3c" stroke-width="4" stroke-linecap="round"/>
+              <path d="M28 78c3-17 12-27 24-27s21 10 24 27c1 5-3 10-8 10H36c-5 0-9-5-8-10Z" fill="#fff6db" stroke="#e4c877" stroke-width="3"/>
+              <circle cx="47" cy="65" r="6" fill="#f06449"/>
+              <circle cx="62" cy="79" r="7" fill="#f06449"/>
+              <circle cx="38" cy="80" r="5" fill="#4f9fd9"/>
+            </svg>
+            <p id="stageNote" class="guide-message">9マスを反転して、お題の模様にそろえる</p>
+          </div>
+        </aside>
+
+        <div id="resultOverlay" class="result-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="resultTitle">
+          <div class="result-window">
+            <h2 id="resultTitle">CLEAR</h2>
+            <p id="resultText">Stage clear</p>
+            <div class="result-actions">
+              <button id="resultSecondaryButton" class="result-button sky" type="button">選択へ</button>
+              <button id="resultPrimaryButton" class="result-button primary" type="button">次へ</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="burstLayer" class="burst-layer" aria-hidden="true"></div>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      const STAGE_CONFIGS = [
+        { size: 4, moves: 1, kind: "tutorial", solution: [5], note: "まず1手の反転範囲を見てみよう" },
+        { size: 4, moves: 2, kind: "tutorial", solution: [5, 6], note: "2回重なった場所は元に戻る" },
+        { size: 4, moves: 2, kind: "tutorial", solution: [0, 15], note: "角は影響できる範囲が少ない" },
+        { size: 4, moves: 2, kind: "tutorial", solution: [5, 10], note: "内側2マスの重なりを見てみよう" },
+        { size: 4, moves: 3, kind: "normal", note: "現在とお題の違う場所だけを見る" },
+        { size: 5, moves: 3, kind: "tutorial", solution: [6, 8, 18], note: "広くなっても重なりの偶奇が鍵" },
+        { size: 5, moves: 4, kind: "tutorial", solution: [0, 4, 20, 24], note: "外側を偶数回にして消す感覚" },
+        { size: 5, moves: 4, kind: "normal", note: "角から差分を減らしていく" },
+        { size: 5, moves: 5, kind: "normal", note: "3x3スタンプを重ねて整える" },
+        { size: 5, moves: 6, kind: "normal", note: "5x5の本番、まだ6手まで" },
+        { size: 6, moves: 4, kind: "tutorial", solution: [0, 3, 18, 21], note: "大きい盤面でも小さい形を作れる" },
+        { size: 6, moves: 5, kind: "normal", note: "端から確定する練習" },
+        { size: 6, moves: 5, kind: "normal", note: "違うマスだけを差分として見る" },
+        { size: 6, moves: 6, kind: "normal", note: "押しセットの重なりを読む" },
+        { size: 6, moves: 6, kind: "normal", note: "6x6でも6手までに抑えた問題" },
+        { size: 7, moves: 5, kind: "normal", note: "広い盤面はまず端から" },
+        { size: 7, moves: 5, kind: "normal", note: "押す場所の集合を探す" },
+        { size: 7, moves: 6, kind: "normal", note: "偶数回の場所は消える" },
+        { size: 7, moves: 6, kind: "normal", note: "差分を3x3で覆う" },
+        { size: 7, moves: 7, kind: "normal", note: "ここから7手、じっくり考える" }
+      ];
+      const WORLD4_STAGE_CONFIGS = [
+        { size: 8, moves: 5, kind: "tutorial", solution: [10, 20, 21, 22, 24], note: "8x8は5手から。差分を区切ろう" },
+        { size: 8, moves: 5, kind: "tutorial", solution: [18, 27, 29, 30, 37], note: "大きい盤面は部分ごとに見る" },
+        { size: 8, moves: 5, kind: "tutorial", solution: [1, 3, 23, 45, 53], note: "端の影響範囲を利用する" },
+        { size: 8, moves: 5, kind: "tutorial", solution: [2, 25, 30, 53, 57], note: "離れた3x3の重なりを見る" },
+        { size: 8, moves: 5, kind: "tutorial", solution: [10, 11, 14, 27, 42], note: "押す集合を先に探してみよう" },
+        { size: 8, moves: 6, kind: "tutorial", solution: [5, 9, 15, 20, 30, 36], note: "6手問題。押す前に差分を区切ろう" },
+        { size: 8, moves: 6, kind: "tutorial", solution: [30, 31, 32, 36, 43, 48], note: "横に並ぶ反転範囲を読む" },
+        { size: 8, moves: 6, kind: "tutorial", solution: [2, 29, 31, 43, 45, 61], note: "8x8でも焦らず差分を見る" },
+        { size: 8, moves: 6, kind: "tutorial", solution: [9, 17, 18, 46, 51, 58], note: "広い盤面は端から整える" },
+        { size: 8, moves: 6, kind: "tutorial", solution: [25, 26, 37, 51, 59, 62], note: "8x8の仕上げ。6手まで" },
+        { size: 9, moves: 5, kind: "tutorial", solution: [13, 31, 40, 49, 67], note: "9x9へ。ここも5手から" },
+        { size: 9, moves: 5, kind: "tutorial", solution: [4, 22, 40, 58, 76], note: "縦の並びをまとめて読む" },
+        { size: 9, moves: 5, kind: "tutorial", solution: [18, 26, 40, 54, 62], note: "左右対称の崩れを探す" },
+        { size: 9, moves: 5, kind: "tutorial", solution: [34, 35, 43, 67, 70], note: "広い余白を味方にする" },
+        { size: 9, moves: 6, kind: "tutorial", solution: [2, 14, 30, 50, 66, 78], note: "9x9の6手問題。中央を基準に見る" },
+        { size: 9, moves: 6, kind: "tutorial", solution: [3, 23, 38, 39, 62, 72], note: "広い盤面でも6手で抑える" },
+        { size: 9, moves: 6, kind: "tutorial", solution: [9, 17, 27, 53, 63, 71], note: "端と中央を分けて考える" },
+        { size: 9, moves: 6, kind: "tutorial", solution: [12, 21, 32, 48, 59, 68], note: "斜めに散った差分を追う" },
+        { size: 9, moves: 7, kind: "tutorial", solution: [3, 6, 35, 41, 72, 74, 76], note: "終盤だけ7手。差分を分割しよう" },
+        { size: 9, moves: 7, kind: "tutorial", solution: [16, 37, 42, 50, 52, 63, 76], note: "WORLD4最終。大きくても7手まで" }
+      ];
+      const WORLD_CONFIGS = [
+        {
+          id: 1,
+          label: "WORLD 1",
+          rule: "square",
+          ruleLabel: "9マス",
+          ruleText: "選択したマスと周囲8マスを反転"
+        },
+        {
+          id: 2,
+          label: "WORLD 2",
+          rule: "cross",
+          ruleLabel: "上下左右",
+          ruleText: "選択したマスと上下左右を反転"
+        },
+        {
+          id: 3,
+          label: "WORLD 3",
+          rule: "diagonal",
+          ruleLabel: "斜め",
+          ruleText: "選択したマスと斜め4方向を反転"
+        },
+        {
+          id: 4,
+          label: "WORLD 4",
+          rule: "square",
+          ruleLabel: "9マス",
+          ruleText: "選択したマスと周囲8マスを反転",
+          stages: WORLD4_STAGE_CONFIGS
+        }
+      ];
+      const TOTAL_STAGES = STAGE_CONFIGS.length;
+      const TOTAL_WORLDS = WORLD_CONFIGS.length;
+      const CONFETTI_COLORS = ["#f06449", "#f8c537", "#42b883", "#4f9fd9", "#fff6db"];
+      const OLD_PROGRESS_KEY = "dino-panel-flip-progress-v2";
+      const PROGRESS_KEY = "dino-panel-flip-progress-v3";
+      const HINT_UNLOCK_FAILURES = 10;
+      const GUIDE_INTERVAL_SECONDS = 5;
+      const GUIDE_TIPS = [
+        "押す順番は関係ないよ",
+        "違うパネルだけを見てみよう",
+        "2回重なった場所は元に戻るよ",
+        "角と端から考えると絞れるよ",
+        "押す場所の集合を探してみよう",
+        "10回失敗するとヒントが使えるよ"
+      ];
+      const DINO_CHATS = [
+        "今日のしっぽはよく動く気がする",
+        "たまご柄って、なんだか落ち着くんだ",
+        "お昼寝なら、あたたかい岩の上がいいな",
+        "雲がたまご形に見える日ってあるよね",
+        "小さい葉っぱを見ると集めたくなる"
+      ];
+
+      const menuScreen = document.querySelector("#menuScreen");
+      const stageScreen = document.querySelector("#stageScreen");
+      const playScreen = document.querySelector("#playScreen");
+      const menuStageValue = document.querySelector("#menuStageValue");
+      const startButton = document.querySelector("#startButton");
+      const selectButton = document.querySelector("#selectButton");
+      const resetProgressButton = document.querySelector("#resetProgressButton");
+      const homeFromStagesButton = document.querySelector("#homeFromStagesButton");
+      const quickCurrentButton = document.querySelector("#quickCurrentButton");
+      const worldTabs = document.querySelector("#worldTabs");
+      const stageGrid = document.querySelector("#stageGrid");
+      const stageSummary = document.querySelector("#stageSummary");
+      const unlockedSummary = document.querySelector("#unlockedSummary");
+      const backToStagesButton = document.querySelector("#backToStagesButton");
+      const boardEl = document.querySelector("#board");
+      const targetBoardEl = document.querySelector("#targetBoard");
+      const worldValue = document.querySelector("#worldValue");
+      const stageValue = document.querySelector("#stageValue");
+      const sizeValue = document.querySelector("#sizeValue");
+      const ruleValue = document.querySelector("#ruleValue");
+      const remainingBanner = document.querySelector("#remainingBanner");
+      const remainingValue = document.querySelector("#remainingValue");
+      const targetCount = document.querySelector("#targetCount");
+      const timeValue = document.querySelector("#timeValue");
+      const movesValue = document.querySelector("#movesValue");
+      const shortestValue = document.querySelector("#shortestValue");
+      const undoButton = document.querySelector("#undoButton");
+      const hintButton = document.querySelector("#hintButton");
+      const retryButton = document.querySelector("#retryButton");
+      const stageButton = document.querySelector("#stageButton");
+      const stageNote = document.querySelector("#stageNote");
+      const guideDino = document.querySelector(".guide-dino");
+      const playArea = document.querySelector("#playArea");
+      const resultOverlay = document.querySelector("#resultOverlay");
+      const resultTitle = document.querySelector("#resultTitle");
+      const resultText = document.querySelector("#resultText");
+      const resultPrimaryButton = document.querySelector("#resultPrimaryButton");
+      const resultSecondaryButton = document.querySelector("#resultSecondaryButton");
+      const burstLayer = document.querySelector("#burstLayer");
+
+      const savedProgress = readProgress();
+      const state = {
+        screen: "menu",
+        world: savedProgress.selectedWorld,
+        selectedWorld: savedProgress.selectedWorld,
+        stage: 1,
+        progress: savedProgress,
+        size: 4,
+        target: [],
+        board: [],
+        initial: [],
+        solution: [],
+        minimumMoves: 0,
+        moves: 0,
+        startedAt: Date.now(),
+        elapsedBeforeResult: 0,
+        completed: false,
+        failed: false,
+        hoveredIndex: null,
+        hintIndex: null,
+        lastFlipped: new Set(),
+        history: [],
+        flipTimer: 0,
+        failTimer: 0,
+        guidePulseTimer: 0,
+        audioContext: null
+      };
+
+      const matrixCache = new Map();
+
+      function readProgress() {
+        try {
+          const stored = JSON.parse(window.localStorage.getItem(PROGRESS_KEY));
+          if (stored && typeof stored === "object") return normalizeProgress(stored);
+
+          const oldValue = Number(window.localStorage.getItem(OLD_PROGRESS_KEY));
+          const migrated = defaultProgress(1);
+          if (Number.isFinite(oldValue)) migrated.unlocked["1"] = clamp(oldValue, 1, totalStagesFor(1));
+          return migrated;
+        } catch {
+          return defaultProgress(1);
+        }
+      }
+
+      function writeProgress() {
+        try {
+          window.localStorage.setItem(PROGRESS_KEY, JSON.stringify(state.progress));
+        } catch {
+          // localStorage can be unavailable in private contexts.
+        }
+      }
+
+      function defaultProgress(selectedWorld = 1) {
+        const unlocked = {};
+        WORLD_CONFIGS.forEach((world) => {
+          unlocked[String(world.id)] = 1;
+        });
+        return {
+          selectedWorld: clamp(selectedWorld, 1, TOTAL_WORLDS),
+          unlocked,
+          failures: {}
+        };
+      }
+
+      function normalizeProgress(progress) {
+        const normalized = defaultProgress(Number(progress.selectedWorld) || 1);
+        if (progress.unlocked && typeof progress.unlocked === "object") {
+          WORLD_CONFIGS.forEach((world) => {
+            const value = Number(progress.unlocked[String(world.id)]);
+            normalized.unlocked[String(world.id)] = Number.isFinite(value) ? clamp(value, 1, totalStagesFor(world.id)) : 1;
+          });
+        }
+        if (progress.failures && typeof progress.failures === "object") {
+          Object.entries(progress.failures).forEach(([key, value]) => {
+            const count = Number(value);
+            const [worldId, stageId] = key.split("-").map(Number);
+            if (worldConfig(worldId).id === worldId && stageId >= 1 && stageId <= totalStagesFor(worldId) && Number.isFinite(count)) {
+              normalized.failures[key] = Math.max(0, Math.floor(count));
+            }
+          });
+        }
+        return normalized;
+      }
+
+      function clamp(value, min, max) {
+        return Math.min(max, Math.max(min, value));
+      }
+
+      function worldConfig(world = state.world) {
+        return WORLD_CONFIGS.find((config) => config.id === world) || WORLD_CONFIGS[0];
+      }
+
+      function stageConfigsFor(world = state.world) {
+        return worldConfig(world).stages || STAGE_CONFIGS;
+      }
+
+      function totalStagesFor(world = state.world) {
+        return stageConfigsFor(world).length;
+      }
+
+      function stageConfig(stage, world = state.world) {
+        const configs = stageConfigsFor(world);
+        return configs[stage - 1] || configs[0];
+      }
+
+      function stageSize(stage, world = state.world) {
+        return stageConfig(stage, world).size;
+      }
+
+      function stageMoveCount(stage, world = state.world) {
+        return stageConfig(stage, world).moves;
+      }
+
+      function stageGroupLabel(stage, world = state.selectedWorld) {
+        const size = stageSize(stage, world);
+        const start = Math.floor((stage - 1) / 5) * 5 + 1;
+        const end = Math.min(start + 4, totalStagesFor(world));
+        return `S${start}-S${end}: ${size} x ${size}`;
+      }
+
+      function maxUnlockedFor(world = state.selectedWorld) {
+        const value = Number(state.progress.unlocked[String(world)]);
+        return Number.isFinite(value) ? clamp(value, 1, totalStagesFor(world)) : 1;
+      }
+
+      function setMaxUnlockedFor(world, value) {
+        state.progress.unlocked[String(world)] = clamp(value, 1, totalStagesFor(world));
+      }
+
+      function stageKey(world = state.world, stage = state.stage) {
+        return `${world}-${stage}`;
+      }
+
+      function failureCountFor(world = state.world, stage = state.stage) {
+        const value = Number(state.progress.failures[stageKey(world, stage)]);
+        return Number.isFinite(value) ? Math.max(0, Math.floor(value)) : 0;
+      }
+
+      function setFailureCountFor(world, stage, count) {
+        state.progress.failures[stageKey(world, stage)] = Math.max(0, Math.floor(count));
+      }
+
+      function incrementFailureCount() {
+        setFailureCountFor(state.world, state.stage, failureCountFor() + 1);
+        writeProgress();
+      }
+
+      function hintUnlocked() {
+        return failureCountFor() >= HINT_UNLOCK_FAILURES;
+      }
+
+      function showScreen(name) {
+        state.screen = name;
+        menuScreen.classList.toggle("hidden", name !== "menu");
+        stageScreen.classList.toggle("hidden", name !== "stage");
+        playScreen.classList.toggle("hidden", name !== "play");
+        if (name === "menu") renderMenu();
+        if (name === "stage") renderStageSelect();
+      }
+
+      function renderMenu() {
+        menuStageValue.textContent = `W${state.selectedWorld} S${maxUnlockedFor(state.selectedWorld)}`;
+      }
+
+      function renderStageSelect() {
+        renderWorldTabs();
+        stageGrid.textContent = "";
+        const selectedWorld = worldConfig(state.selectedWorld);
+        const maxUnlocked = maxUnlockedFor(state.selectedWorld);
+        const totalStages = totalStagesFor(state.selectedWorld);
+        stageSummary.textContent = `${selectedWorld.label} / ${selectedWorld.ruleLabel}`;
+        unlockedSummary.textContent = stageGroupLabel(maxUnlocked);
+        quickCurrentButton.textContent = `W${state.selectedWorld} S${maxUnlocked}へ`;
+
+        for (let stage = 1; stage <= totalStages; stage += 1) {
+          const button = document.createElement("button");
+          const unlocked = stage <= maxUnlocked;
+          const cleared = stage < maxUnlocked;
+          const current = stage === maxUnlocked;
+          button.type = "button";
+          button.className = [
+            "stage-button",
+            cleared ? "cleared" : "",
+            current ? "current" : "",
+            unlocked ? "" : "locked"
+          ].filter(Boolean).join(" ");
+          button.disabled = !unlocked;
+          button.setAttribute("aria-label", `ワールド${state.selectedWorld} ステージ${stage} ${stageSize(stage, state.selectedWorld)}x${stageSize(stage, state.selectedWorld)} 最短${stageMoveCount(stage, state.selectedWorld)}手`);
+          button.innerHTML = `<span class="stage-no">S${stage}</span> <span class="stage-meta">${stageSize(stage, state.selectedWorld)}x${stageSize(stage, state.selectedWorld)} / ${stageMoveCount(stage, state.selectedWorld)}手</span>`;
+          button.addEventListener("click", () => startStage(stage, state.selectedWorld));
+          stageGrid.append(button);
+        }
+      }
+
+      function renderWorldTabs() {
+        worldTabs.textContent = "";
+        WORLD_CONFIGS.forEach((world) => {
+          const button = document.createElement("button");
+          const active = world.id === state.selectedWorld;
+          button.type = "button";
+          button.className = ["world-tab", active ? "active" : ""].filter(Boolean).join(" ");
+          button.setAttribute("role", "tab");
+          button.setAttribute("aria-selected", active ? "true" : "false");
+          button.innerHTML = `<span class="world-no">${world.label}</span> <span class="world-rule">${world.ruleLabel} / S${maxUnlockedFor(world.id)} open</span>`;
+          button.addEventListener("click", () => {
+            state.selectedWorld = world.id;
+            state.progress.selectedWorld = world.id;
+            writeProgress();
+            renderMenu();
+            renderStageSelect();
+          });
+          worldTabs.append(button);
+        });
+      }
+
+      function startStage(stage, world = state.selectedWorld) {
+        if (stage > maxUnlockedFor(world) || stage > totalStagesFor(world)) return;
+        state.world = world;
+        state.selectedWorld = world;
+        state.progress.selectedWorld = world;
+        state.stage = stage;
+        writeProgress();
+        createPuzzle();
+        showScreen("play");
+      }
+
+      function createPuzzle() {
+        const config = stageConfig(state.stage, state.world);
+        const puzzle = makePuzzleForStage(config, state.stage, state.world);
+
+        state.size = config.size;
+        state.target = puzzle.target;
+        state.board = puzzle.board;
+        state.initial = puzzle.board.slice();
+        state.solution = puzzle.solution;
+        state.minimumMoves = puzzle.minimumMoves;
+        state.moves = 0;
+        state.startedAt = Date.now();
+        state.elapsedBeforeResult = 0;
+        state.completed = false;
+        state.failed = false;
+        state.hoveredIndex = null;
+        state.hintIndex = null;
+        state.lastFlipped = new Set();
+        state.history = [];
+        window.clearTimeout(state.flipTimer);
+        window.clearTimeout(state.failTimer);
+        window.clearTimeout(state.guidePulseTimer);
+        hideResult();
+        renderPlay();
+      }
+
+      function makePuzzleForStage(config, stage, world) {
+        if (config.kind === "tutorial" && config.solution) {
+          const tutorial = makeTutorialPuzzle(config, world);
+          if (tutorial) return tutorial;
+        }
+        const target = makeTarget(config.size, stage, world);
+        return makePuzzleWithExactMinimum(config.size, target, config.moves, world);
+      }
+
+      function makeTutorialPuzzle(config, world) {
+        const total = config.size * config.size;
+        const diff = Array(total).fill(0);
+        config.solution.forEach((move) => flipAt(diff, move, config.size, world));
+        const solution = solveMinimum(config.size, diff, world);
+        if (!solution || solution.weight !== config.moves) return null;
+        return {
+          board: Array(total).fill(0),
+          target: diff,
+          solution: solution.vector,
+          minimumMoves: solution.weight
+        };
+      }
+
+      function makePuzzleWithExactMinimum(size, target, targetMoves, world) {
+        const total = size * size;
+        for (let attempt = 0; attempt < 500; attempt += 1) {
+          const moves = sampleDistinct(total, targetMoves);
+          const diff = Array(total).fill(0);
+          moves.forEach((move) => flipAt(diff, move, size, world));
+          const solution = solveMinimum(size, diff, world);
+          if (solution && solution.weight === targetMoves) {
+            return {
+              board: target.map((value, index) => value ^ diff[index]),
+              target,
+              solution: solution.vector,
+              minimumMoves: solution.weight
+            };
+          }
+        }
+
+        const fallbackMoves = sampleDistinct(total, targetMoves);
+        const diff = Array(total).fill(0);
+        fallbackMoves.forEach((move) => flipAt(diff, move, size, world));
+        const solution = solveMinimum(size, diff, world);
+        return {
+          board: target.map((value, index) => value ^ diff[index]),
+          target,
+          solution: solution.vector,
+          minimumMoves: solution.weight
+        };
+      }
+
+      function sampleDistinct(total, count) {
+        const values = Array.from({ length: total }, (_, index) => index);
+        for (let i = values.length - 1; i > 0; i -= 1) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [values[i], values[j]] = [values[j], values[i]];
+        }
+        return values.slice(0, count);
+      }
+
+      function makeTarget(size, stage, world = state.world) {
+        const mode = (stage - 1 + (world - 1) * 2) % 8;
+        const target = [];
+        const center = (size - 1) / 2;
+        for (let row = 0; row < size; row += 1) {
+          for (let col = 0; col < size; col += 1) {
+            const mirrorRow = Math.min(row, size - 1 - row);
+            const mirrorCol = Math.min(col, size - 1 - col);
+            const dist = Math.abs(row - center) + Math.abs(col - center);
+            const ring = Math.max(Math.abs(row - center), Math.abs(col - center));
+            let value = false;
+
+            if (mode === 0) value = row === 0 || col === 0 || row === size - 1 || col === size - 1;
+            if (mode === 1) value = dist <= Math.floor(size / 2);
+            if (mode === 2) value = row === col || row + col === size - 1;
+            if (mode === 3) value = Math.abs(row - center) < 0.75 || Math.abs(col - center) < 0.75;
+            if (mode === 4) value = (mirrorRow + mirrorCol) % 2 === 0;
+            if (mode === 5) value = ring > size * 0.18 && ring < size * 0.48;
+            if (mode === 6) value = mirrorRow === 0 || mirrorCol === 0 || dist <= 1.4;
+            if (mode === 7) value = Math.abs(row - center) === Math.abs(col - center) || dist <= 1.2;
+
+            target.push(value ? 1 : 0);
+          }
+        }
+        return normalizeTarget(target, size);
+      }
+
+      function normalizeTarget(target, size) {
+        const ones = target.reduce((sum, value) => sum + value, 0);
+        if (ones > 0 && ones < target.length) return target;
+        return target.map((_, index) => {
+          const row = Math.floor(index / size);
+          const col = index % size;
+          return (row + col) % 2 ? 1 : 0;
+        });
+      }
+
+      function getAffectedIndices(index, size = state.size, world = state.world) {
+        const row = Math.floor(index / size);
+        const col = index % size;
+        const directionsByRule = {
+          square: [
+            [-1, -1], [-1, 0], [-1, 1],
+            [0, -1], [0, 0], [0, 1],
+            [1, -1], [1, 0], [1, 1]
+          ],
+          cross: [
+            [-1, 0],
+            [0, -1], [0, 0], [0, 1],
+            [1, 0]
+          ],
+          diagonal: [
+            [-1, -1], [-1, 1],
+            [0, 0],
+            [1, -1], [1, 1]
+          ]
+        };
+        const directions = directionsByRule[worldConfig(world).rule] || directionsByRule.square;
+        const affected = [];
+        directions.forEach(([dr, dc]) => {
+          const nextRow = row + dr;
+          const nextCol = col + dc;
+          if (nextRow >= 0 && nextRow < size && nextCol >= 0 && nextCol < size) {
+            affected.push(nextRow * size + nextCol);
+          }
+        });
+        return affected;
+      }
+
+      function flipAt(board, index, size = state.size, world = state.world) {
+        const flipped = getAffectedIndices(index, size, world);
+        flipped.forEach((affectedIndex) => {
+          board[affectedIndex] = board[affectedIndex] ? 0 : 1;
+        });
+        return flipped;
+      }
+
+      function solveMinimum(size, diff, world = state.world) {
+        const total = size * size;
+        const matrix = buildMatrix(size, world).map((row, index) => row.concat(diff[index]));
+        let pivotRow = 0;
+        const pivotCols = [];
+
+        for (let col = 0; col < total && pivotRow < total; col += 1) {
+          let selected = -1;
+          for (let row = pivotRow; row < total; row += 1) {
+            if (matrix[row][col]) {
+              selected = row;
+              break;
+            }
+          }
+          if (selected === -1) continue;
+          [matrix[pivotRow], matrix[selected]] = [matrix[selected], matrix[pivotRow]];
+
+          for (let row = 0; row < total; row += 1) {
+            if (row !== pivotRow && matrix[row][col]) {
+              for (let k = col; k <= total; k += 1) {
+                matrix[row][k] ^= matrix[pivotRow][k];
+              }
+            }
+          }
+          pivotCols[pivotRow] = col;
+          pivotRow += 1;
+        }
+
+        for (let row = 0; row < total; row += 1) {
+          const hasCoefficient = matrix[row].slice(0, total).some(Boolean);
+          if (!hasCoefficient && matrix[row][total]) return null;
+        }
+
+        const pivotSet = new Set(pivotCols);
+        const freeCols = [];
+        for (let col = 0; col < total; col += 1) {
+          if (!pivotSet.has(col)) freeCols.push(col);
+        }
+
+        const particular = Array(total).fill(0);
+        for (let row = 0; row < pivotRow; row += 1) {
+          particular[pivotCols[row]] = matrix[row][total];
+        }
+
+        let best = particular;
+        let bestWeight = weightOf(best);
+        const basis = freeCols.map((freeCol) => {
+          const vector = Array(total).fill(0);
+          vector[freeCol] = 1;
+          for (let row = 0; row < pivotRow; row += 1) {
+            if (matrix[row][freeCol]) vector[pivotCols[row]] = 1;
+          }
+          return vector;
+        });
+
+        const variants = 1 << basis.length;
+        for (let mask = 1; mask < variants; mask += 1) {
+          const candidate = particular.slice();
+          for (let i = 0; i < basis.length; i += 1) {
+            if (mask & (1 << i)) {
+              for (let col = 0; col < total; col += 1) {
+                candidate[col] ^= basis[i][col];
+              }
+            }
+          }
+          const weight = weightOf(candidate);
+          if (weight < bestWeight) {
+            best = candidate;
+            bestWeight = weight;
+          }
+        }
+
+        return {
+          vector: best,
+          weight: bestWeight
+        };
+      }
+
+      function buildMatrix(size, world = state.world) {
+        const cacheKey = `${world}-${size}`;
+        if (matrixCache.has(cacheKey)) return matrixCache.get(cacheKey);
+        const total = size * size;
+        const matrix = Array.from({ length: total }, (_, row) => {
+          const values = Array(total).fill(0);
+          for (let col = 0; col < total; col += 1) {
+            if (getAffectedIndices(col, size, world).includes(row)) values[col] = 1;
+          }
+          return values;
+        });
+        matrixCache.set(cacheKey, matrix);
+        return matrix;
+      }
+
+      function weightOf(values) {
+        return values.reduce((sum, value) => sum + (value ? 1 : 0), 0);
+      }
+
+      function performMove(index) {
+        if (state.completed || state.failed) return;
+        unlockAudio();
+        playFlipSound();
+        const before = state.board.slice();
+        const flipped = flipAt(state.board, index);
+        state.history.push(before);
+        state.moves += 1;
+        state.hoveredIndex = null;
+        state.hintIndex = null;
+        state.lastFlipped = new Set(flipped);
+        window.clearTimeout(state.flipTimer);
+        state.flipTimer = window.setTimeout(() => {
+          state.lastFlipped = new Set();
+          renderBoards();
+        }, 320);
+
+        if (isSolved()) {
+          finishStage();
+        } else if (remainingMoves() <= 0) {
+          failStage();
+        }
+        renderPlay();
+      }
+
+      function undoMove() {
+        if (!state.history.length || state.completed || state.failed) return;
+        state.board = state.history.pop();
+        state.moves = Math.max(0, state.moves - 1);
+        state.hintIndex = null;
+        state.lastFlipped = new Set();
+        renderPlay();
+      }
+
+      function retryStage() {
+        state.board = state.initial.slice();
+        state.history = [];
+        state.moves = 0;
+        state.startedAt = Date.now();
+        state.elapsedBeforeResult = 0;
+        state.completed = false;
+        state.failed = false;
+        state.hoveredIndex = null;
+        state.hintIndex = null;
+        state.lastFlipped = new Set();
+        window.clearTimeout(state.failTimer);
+        window.clearTimeout(state.guidePulseTimer);
+        hideResult();
+        renderPlay();
+      }
+
+      function showHint() {
+        if (state.completed || state.failed || remainingMoves() <= 0 || !hintUnlocked()) return;
+        const solution = solveMinimum(state.size, currentDiff(), state.world);
+        const candidates = solution
+          ? solution.vector.map((value, index) => value ? index : -1).filter((index) => index >= 0)
+          : [];
+        if (!candidates.length) return;
+        state.hintIndex = candidates[Math.floor(Math.random() * candidates.length)];
+        renderPlay();
+      }
+
+      function finishStage() {
+        state.completed = true;
+        state.elapsedBeforeResult = elapsedSeconds();
+        if (state.stage === maxUnlockedFor(state.world) && maxUnlockedFor(state.world) < totalStagesFor(state.world)) {
+          setMaxUnlockedFor(state.world, maxUnlockedFor(state.world) + 1);
+          writeProgress();
+        }
+        playClearSound();
+        celebrate();
+        showResult("clear");
+      }
+
+      function failStage() {
+        state.failed = true;
+        state.elapsedBeforeResult = elapsedSeconds();
+        incrementFailureCount();
+        window.clearTimeout(state.failTimer);
+        state.failTimer = window.setTimeout(() => {
+          if (state.failed && state.screen === "play") showResult("fail");
+        }, 1600);
+      }
+
+      function isSolved() {
+        return state.board.every((value, index) => value === state.target[index]);
+      }
+
+      function currentDiff() {
+        return state.board.map((value, index) => value ^ state.target[index]);
+      }
+
+      function remainingMoves() {
+        return Math.max(0, state.minimumMoves - state.moves);
+      }
+
+      function renderPlay() {
+        renderBoards();
+        renderInfo();
+      }
+
+      function currentGuideMessage() {
+        if (state.completed) return "きれいにそろいました";
+        if (state.failed) return "点滅している場所が、お題と違うパネルです";
+        if (state.hintIndex !== null) return "黄色い候補を押すと、答えに近づきます";
+
+        const messages = guideMessages();
+        const tick = Math.floor(elapsedSeconds() / GUIDE_INTERVAL_SECONDS);
+        if (tick > 0 && tick % 4 === 3) {
+          return DINO_CHATS[Math.floor(tick / 4) % DINO_CHATS.length];
+        }
+        return messages[tick % messages.length];
+      }
+
+      function guideMessages() {
+        const world = worldConfig();
+        const messages = [
+          `このWORLDでは、${world.ruleText}します`,
+          stageConfig(state.stage, state.world).note,
+          ...GUIDE_TIPS
+        ];
+
+        if (!hintUnlocked()) {
+          messages.push(`ヒント解禁まであと${HINT_UNLOCK_FAILURES - failureCountFor()}回失敗`);
+        } else {
+          messages.push("ヒントボタンで答えの候補を1マス見られるよ");
+        }
+        if (world.rule === "cross") messages.push("上下左右は、行と列のつながりを見よう");
+        if (world.rule === "diagonal") messages.push("斜めWORLDは、同じ色のマス同士を意識しよう");
+        if (state.world === 4) messages.push("WORLD4は広いぶん、手数は控えめだよ");
+        if (state.size >= 8) messages.push("大きい盤面は、まず四分割して眺めよう");
+        if (remainingMoves() <= 2) messages.push("残り少なめ。押す前に差分を見よう");
+        if (state.history.length) messages.push("戻すで1手前から考え直せるよ");
+        if (state.size >= 5) messages.push("広い盤面は端から見ると楽だよ");
+
+        return [...new Set(messages)];
+      }
+
+      function setGuideMessage(message) {
+        if (stageNote.textContent === message) return;
+        stageNote.textContent = message;
+        stageNote.classList.remove("speaking");
+        guideDino.classList.remove("speaking");
+        void stageNote.offsetWidth;
+        stageNote.classList.add("speaking");
+        guideDino.classList.add("speaking");
+        window.clearTimeout(state.guidePulseTimer);
+        state.guidePulseTimer = window.setTimeout(() => {
+          stageNote.classList.remove("speaking");
+          guideDino.classList.remove("speaking");
+        }, 560);
+      }
+
+      function renderBoards() {
+        boardEl.style.setProperty("--size", state.size);
+        targetBoardEl.style.setProperty("--size", state.size);
+        boardEl.textContent = "";
+        targetBoardEl.textContent = "";
+
+        const affected = state.hoveredIndex === null
+          ? new Set()
+          : new Set(getAffectedIndices(state.hoveredIndex));
+
+        state.board.forEach((value, index) => {
+          const tile = document.createElement("button");
+          tile.type = "button";
+          tile.className = [
+            "tile",
+            `state-${value}`,
+            affected.has(index) ? "affected" : "",
+            state.lastFlipped.has(index) ? "flipped" : "",
+            state.hintIndex === index ? "hint" : "",
+            state.failed && value !== state.target[index] ? "mismatch" : ""
+          ].filter(Boolean).join(" ");
+          tile.setAttribute("aria-label", `行${Math.floor(index / state.size) + 1} 列${index % state.size + 1}`);
+          tile.disabled = state.completed || state.failed;
+          tile.addEventListener("click", () => performMove(index));
+          tile.addEventListener("mouseenter", () => {
+            if (state.hoveredIndex === index) return;
+            state.hoveredIndex = index;
+            renderBoards();
+          });
+          tile.addEventListener("mouseleave", () => {
+            if (state.hoveredIndex === null) return;
+            state.hoveredIndex = null;
+            renderBoards();
+          });
+          tile.addEventListener("focus", () => {
+            if (state.hoveredIndex === index) return;
+            state.hoveredIndex = index;
+            renderBoards();
+          });
+          tile.addEventListener("blur", () => {
+            if (state.hoveredIndex === null) return;
+            state.hoveredIndex = null;
+            renderBoards();
+          });
+          boardEl.append(tile);
+        });
+
+        state.target.forEach((value) => {
+          const tile = document.createElement("div");
+          tile.className = [
+            "tile",
+            "tile-mini",
+            `state-${value}`,
+            state.failed && value !== state.board[targetBoardEl.children.length] ? "mismatch" : ""
+          ].filter(Boolean).join(" ");
+          targetBoardEl.append(tile);
+        });
+      }
+
+      function renderInfo() {
+        const hintReady = hintUnlocked();
+        const failures = failureCountFor();
+        const world = worldConfig();
+        worldValue.textContent = state.world;
+        stageValue.textContent = state.stage;
+        sizeValue.textContent = `${state.size}x${state.size}`;
+        ruleValue.textContent = world.ruleLabel;
+        remainingValue.textContent = remainingMoves();
+        movesValue.textContent = state.moves;
+        shortestValue.textContent = state.minimumMoves;
+        timeValue.textContent = formatTime(state.completed || state.failed ? state.elapsedBeforeResult : elapsedSeconds());
+        targetCount.textContent = `${countMatches()} / ${state.target.length}`;
+        remainingBanner.classList.toggle("warning", !state.completed && !state.failed && remainingMoves() <= 2);
+        undoButton.disabled = !state.history.length || state.completed || state.failed;
+        hintButton.disabled = state.completed || state.failed || remainingMoves() <= 0 || !hintReady;
+        hintButton.textContent = hintReady ? "ヒント" : `ヒント${Math.min(failures, HINT_UNLOCK_FAILURES)}/10`;
+        hintButton.title = hintReady
+          ? "答えの候補を1マスだけ表示"
+          : `${HINT_UNLOCK_FAILURES}回失敗するとヒントが使えます`;
+        setGuideMessage(currentGuideMessage());
+      }
+
+      function countMatches() {
+        return state.board.reduce((sum, value, index) => sum + (value === state.target[index] ? 1 : 0), 0);
+      }
+
+      function showResult(type) {
+        window.clearTimeout(state.failTimer);
+        state.failTimer = 0;
+        resultOverlay.classList.remove("hidden");
+        if (type === "clear") {
+          const totalStages = totalStagesFor(state.world);
+          const hasNext = state.stage < totalStages;
+          resultTitle.textContent = state.stage === totalStages ? "WORLD CLEAR" : state.stage % 5 === 0 && hasNext ? "BOARD UP" : "STAGE CLEAR";
+          resultText.textContent = hasNext
+            ? `WORLD${state.world} S${state.stage}を最短${state.minimumMoves}手でクリア。次はS${state.stage + 1}です。`
+            : `WORLD${state.world}の全ステージクリアです。`;
+          resultPrimaryButton.textContent = hasNext ? "次へ" : "選択へ";
+          resultPrimaryButton.onclick = () => {
+            if (hasNext) startStage(state.stage + 1, state.world);
+            else showScreen("stage");
+          };
+        } else {
+          resultTitle.textContent = "LIMIT OVER";
+          resultText.textContent = hintUnlocked()
+            ? "ヒントが使えるようになりました。点滅していたパネルがお題との差分です。"
+            : `点滅していたパネルがお題との差分です。ヒント解禁まであと${HINT_UNLOCK_FAILURES - failureCountFor()}回失敗。`;
+          resultPrimaryButton.textContent = "リトライ";
+          resultPrimaryButton.onclick = retryStage;
+        }
+        resultSecondaryButton.onclick = () => showScreen("stage");
+      }
+
+      function hideResult() {
+        window.clearTimeout(state.failTimer);
+        state.failTimer = 0;
+        window.clearTimeout(state.guidePulseTimer);
+        stageNote.classList.remove("speaking");
+        guideDino.classList.remove("speaking");
+        resultOverlay.classList.add("hidden");
+        playArea.classList.remove("clear-glow");
+        burstLayer.textContent = "";
+      }
+
+      function celebrate() {
+        playArea.classList.add("clear-glow");
+        burstLayer.textContent = "";
+        for (let i = 0; i < 34; i += 1) {
+          const piece = document.createElement("span");
+          const x = 28 + Math.random() * 44;
+          const y = 34 + Math.random() * 18;
+          piece.className = "confetti";
+          piece.style.left = `${x}%`;
+          piece.style.top = `${y}%`;
+          piece.style.background = CONFETTI_COLORS[i % CONFETTI_COLORS.length];
+          piece.style.setProperty("--dx", `${(Math.random() - 0.5) * 360}px`);
+          piece.style.setProperty("--dy", `${160 + Math.random() * 230}px`);
+          piece.style.setProperty("--rot", `${180 + Math.random() * 540}deg`);
+          piece.style.animationDelay = `${Math.random() * 90}ms`;
+          burstLayer.append(piece);
+        }
+        window.setTimeout(() => {
+          playArea.classList.remove("clear-glow");
+        }, 720);
+      }
+
+      function unlockAudio() {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return null;
+        if (!state.audioContext) state.audioContext = new AudioContext();
+        if (state.audioContext.state === "suspended") state.audioContext.resume();
+        return state.audioContext;
+      }
+
+      function playFlipSound() {
+        const ctx = unlockAudio();
+        if (!ctx) return;
+        const now = ctx.currentTime;
+        const duration = 0.28;
+        const buffer = ctx.createBuffer(1, Math.floor(ctx.sampleRate * duration), ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < data.length; i += 1) {
+          const progress = i / data.length;
+          const snap = Math.exp(-progress * 8.2);
+          const flutter = 0.62 + Math.sin(i * 0.087) * 0.18 + Math.sin(i * 0.029) * 0.13;
+          const noise = Math.random() * 2 - 1;
+          data[i] = noise * flutter * snap;
+        }
+
+        const paper = ctx.createBufferSource();
+        const high = ctx.createBiquadFilter();
+        const crisp = ctx.createBiquadFilter();
+        const gain = ctx.createGain();
+
+        paper.buffer = buffer;
+        high.type = "highpass";
+        high.frequency.setValueAtTime(520, now);
+        high.frequency.linearRampToValueAtTime(980, now + duration * 0.72);
+        crisp.type = "bandpass";
+        crisp.frequency.setValueAtTime(2200, now);
+        crisp.frequency.exponentialRampToValueAtTime(860, now + duration);
+        crisp.Q.setValueAtTime(0.85, now);
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.exponentialRampToValueAtTime(0.23, now + 0.012);
+        gain.gain.setTargetAtTime(0.085, now + 0.045, 0.055);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+        paper.connect(high).connect(crisp).connect(gain).connect(ctx.destination);
+        paper.start(now);
+        paper.stop(now + duration);
+
+        [
+          { offset: 0, frequency: 410, peak: 0.07, length: 0.055 },
+          { offset: 0.12, frequency: 250, peak: 0.06, length: 0.075 }
+        ].forEach((snap) => {
+          const click = ctx.createOscillator();
+          const clickGain = ctx.createGain();
+          click.type = "triangle";
+          click.frequency.setValueAtTime(snap.frequency, now + snap.offset);
+          click.frequency.exponentialRampToValueAtTime(120, now + snap.offset + snap.length);
+          clickGain.gain.setValueAtTime(0.0001, now + snap.offset);
+          clickGain.gain.exponentialRampToValueAtTime(snap.peak, now + snap.offset + 0.008);
+          clickGain.gain.exponentialRampToValueAtTime(0.0001, now + snap.offset + snap.length);
+          click.connect(clickGain).connect(ctx.destination);
+          click.start(now + snap.offset);
+          click.stop(now + snap.offset + snap.length);
+        });
+      }
+
+      function playClearSound() {
+        const ctx = unlockAudio();
+        if (!ctx) return;
+        const now = ctx.currentTime;
+        [523.25, 659.25, 783.99, 1046.5].forEach((frequency, index) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = index === 3 ? "triangle" : "sine";
+          osc.frequency.setValueAtTime(frequency, now + index * 0.08);
+          gain.gain.setValueAtTime(0.0001, now + index * 0.08);
+          gain.gain.exponentialRampToValueAtTime(0.13, now + index * 0.08 + 0.025);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + index * 0.08 + 0.42);
+          osc.connect(gain).connect(ctx.destination);
+          osc.start(now + index * 0.08);
+          osc.stop(now + index * 0.08 + 0.45);
+        });
+      }
+
+      function elapsedSeconds() {
+        return Math.max(0, Math.floor((Date.now() - state.startedAt) / 1000));
+      }
+
+      function formatTime(totalSeconds) {
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        return `${minutes}:${String(seconds).padStart(2, "0")}`;
+      }
+
+      startButton.addEventListener("click", () => showScreen("stage"));
+      selectButton.addEventListener("click", () => showScreen("stage"));
+      homeFromStagesButton.addEventListener("click", () => showScreen("menu"));
+      quickCurrentButton.addEventListener("click", () => startStage(maxUnlockedFor(state.selectedWorld), state.selectedWorld));
+      backToStagesButton.addEventListener("click", () => showScreen("stage"));
+      stageButton.addEventListener("click", () => showScreen("stage"));
+      retryButton.addEventListener("click", retryStage);
+      undoButton.addEventListener("click", undoMove);
+      hintButton.addEventListener("click", showHint);
+      resetProgressButton.addEventListener("click", () => {
+        state.progress = defaultProgress(1);
+        state.world = 1;
+        state.selectedWorld = 1;
+        writeProgress();
+        renderMenu();
+      });
+
+      window.addEventListener("keydown", (event) => {
+        if (state.screen !== "play") return;
+        if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "z") {
+          event.preventDefault();
+          undoMove();
+        }
+        if (event.key === "Escape") showScreen("stage");
+      });
+
+      window.setInterval(() => {
+        if (state.screen === "play" && !state.completed && !state.failed) renderInfo();
+      }, 1000);
+
+      renderMenu();
+    })();
+  </script>
+</body>
+</html>
