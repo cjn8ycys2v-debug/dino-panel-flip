@@ -289,7 +289,7 @@
 
     .world-tabs {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(5, minmax(0, 1fr));
       gap: 9px;
     }
 
@@ -1441,10 +1441,33 @@
         { size: 9, moves: 8, kind: "tutorial", solution: [1, 4, 23, 30, 40, 57, 60, 70], note: "最終盤だけ8手。大きく区切ろう" },
         { size: 9, moves: 8, kind: "tutorial", solution: [15, 18, 21, 55, 56, 62, 74, 80], note: "WORLD4最終。8手まで上がります" }
       ];
+      const EXTRA_STAGE_CONFIGS = [
+        { size: 3, moves: 5, kind: "tutorial", solution: [1, 3, 4, 5, 7], note: "EXTRA開始。3x3でも5手はかなり重い" },
+        { size: 3, moves: 6, kind: "tutorial", solution: [0, 1, 2, 6, 7, 8], note: "上下の帯を重ねて、消える場所を見る" },
+        { size: 3, moves: 7, kind: "tutorial", solution: [0, 1, 3, 4, 5, 7, 8], note: "3x3上級。押さないマスを探す感覚" },
+        { size: 3, moves: 8, kind: "tutorial", solution: [0, 1, 2, 3, 5, 6, 7, 8], note: "1マスだけ押さない形を考えよう" },
+        { size: 3, moves: 9, kind: "tutorial", solution: [0, 1, 2, 3, 4, 5, 6, 7, 8], note: "3x3理論上限。全マス押しが答え" },
+        { size: 4, moves: 8, kind: "tutorial", solution: [0, 3, 5, 6, 9, 10, 12, 15], note: "4x4開始。角と中央の重なりを見る" },
+        { size: 4, moves: 9, kind: "tutorial", solution: [1, 2, 4, 5, 6, 7, 8, 11, 13], note: "9手問題。辺から候補を絞ろう" },
+        { size: 4, moves: 10, kind: "tutorial", solution: [0, 1, 3, 4, 6, 9, 11, 12, 14, 15], note: "10手。押す集合として全体を見る" },
+        { size: 4, moves: 11, kind: "tutorial", solution: [0, 1, 2, 4, 5, 6, 9, 10, 11, 13, 15], note: "4x4終盤。押さない5マスもヒント" },
+        { size: 4, moves: 12, kind: "tutorial", solution: [0, 1, 2, 3, 4, 7, 8, 11, 12, 13, 14, 15], note: "4x4実用上限。外周を読もう" },
+        { size: 5, moves: 7, kind: "tutorial", solution: [2, 6, 10, 12, 14, 18, 22], note: "5x5は例外盤面。7手でも油断できない" },
+        { size: 5, moves: 8, kind: "tutorial", solution: [0, 7, 11, 14, 15, 16, 22, 24], note: "5x5の8手。短縮できない形です" },
+        { size: 5, moves: 9, kind: "tutorial", solution: [6, 7, 8, 11, 12, 13, 16, 17, 18], note: "5x5理論上限。中央3x3を読む" },
+        { size: 5, moves: 9, kind: "tutorial", solution: [0, 2, 4, 10, 12, 14, 20, 22, 24], note: "5x5上限その2。対称性を頼りにする" },
+        { size: 5, moves: 9, kind: "tutorial", solution: [0, 7, 10, 12, 14, 15, 16, 21, 22], note: "5x5最終。9手の別解なし問題" },
+        { size: 6, moves: 8, kind: "tutorial", solution: [0, 5, 14, 15, 20, 21, 30, 35], note: "6x6開始。8手でも十分上級" },
+        { size: 6, moves: 9, kind: "tutorial", solution: [2, 3, 12, 14, 15, 17, 20, 21, 32], note: "9手。盤面を四分割して眺めよう" },
+        { size: 6, moves: 10, kind: "tutorial", solution: [0, 5, 7, 10, 14, 15, 20, 21, 25, 28], note: "10手。人力ではここからかなり重い" },
+        { size: 6, moves: 11, kind: "tutorial", solution: [0, 5, 7, 10, 14, 15, 20, 21, 25, 28, 30], note: "11手。差分を端から確定しよう" },
+        { size: 6, moves: 12, kind: "tutorial", solution: [1, 4, 6, 11, 13, 16, 19, 22, 24, 29, 31, 34], note: "EXTRA最終。6x6の実用上限です" }
+      ];
       const WORLD_CONFIGS = [
         {
           id: 1,
           label: "WORLD 1",
+          shortLabel: "W1",
           rule: "square",
           ruleLabel: "9マス",
           ruleText: "選択したマスと周囲8マスを反転"
@@ -1452,6 +1475,7 @@
         {
           id: 2,
           label: "WORLD 2",
+          shortLabel: "W2",
           rule: "cross",
           ruleLabel: "上下左右",
           ruleText: "選択したマスと上下左右を反転"
@@ -1459,6 +1483,7 @@
         {
           id: 3,
           label: "WORLD 3",
+          shortLabel: "W3",
           rule: "diagonal",
           ruleLabel: "斜め",
           ruleText: "選択したマスと斜め4方向を反転"
@@ -1466,10 +1491,20 @@
         {
           id: 4,
           label: "WORLD 4",
+          shortLabel: "W4",
           rule: "square",
           ruleLabel: "9マス",
           ruleText: "選択したマスと周囲8マスを反転",
           stages: WORLD4_STAGE_CONFIGS
+        },
+        {
+          id: 5,
+          label: "EXTRA",
+          shortLabel: "EX",
+          rule: "square",
+          ruleLabel: "9マスEX",
+          ruleText: "選択したマスと周囲8マスを反転",
+          stages: EXTRA_STAGE_CONFIGS
         }
       ];
       const TOTAL_STAGES = STAGE_CONFIGS.length;
@@ -1634,6 +1669,14 @@
         return WORLD_CONFIGS.find((config) => config.id === world) || WORLD_CONFIGS[0];
       }
 
+      function worldShortLabel(world = state.world) {
+        return worldConfig(world).shortLabel || `W${world}`;
+      }
+
+      function worldTitleLabel(world = state.world) {
+        return world === 5 ? "EXTRA" : world;
+      }
+
       function stageConfigsFor(world = state.world) {
         return worldConfig(world).stages || STAGE_CONFIGS;
       }
@@ -1707,7 +1750,7 @@
       }
 
       function renderMenu() {
-        menuStageValue.textContent = `W${state.selectedWorld} S${maxUnlockedFor(state.selectedWorld)}`;
+        menuStageValue.textContent = `${worldShortLabel(state.selectedWorld)} S${maxUnlockedFor(state.selectedWorld)}`;
       }
 
       function renderStageSelect() {
@@ -1718,7 +1761,7 @@
         const totalStages = totalStagesFor(state.selectedWorld);
         stageSummary.textContent = `${selectedWorld.label} / ${selectedWorld.ruleLabel}`;
         unlockedSummary.textContent = stageGroupLabel(maxUnlocked);
-        quickCurrentButton.textContent = `W${state.selectedWorld} S${maxUnlocked}へ`;
+        quickCurrentButton.textContent = `${worldShortLabel(state.selectedWorld)} S${maxUnlocked}へ`;
 
         for (let stage = 1; stage <= totalStages; stage += 1) {
           const button = document.createElement("button");
@@ -1733,7 +1776,7 @@
             unlocked ? "" : "locked"
           ].filter(Boolean).join(" ");
           button.disabled = !unlocked;
-          button.setAttribute("aria-label", `ワールド${state.selectedWorld} ステージ${stage} ${stageSize(stage, state.selectedWorld)}x${stageSize(stage, state.selectedWorld)} 最短${stageMoveCount(stage, state.selectedWorld)}手`);
+          button.setAttribute("aria-label", `${selectedWorld.label} ステージ${stage} ${stageSize(stage, state.selectedWorld)}x${stageSize(stage, state.selectedWorld)} 最短${stageMoveCount(stage, state.selectedWorld)}手`);
           button.innerHTML = `<span class="stage-no">S${stage}</span> <span class="stage-meta">${stageSize(stage, state.selectedWorld)}x${stageSize(stage, state.selectedWorld)} / ${stageMoveCount(stage, state.selectedWorld)}手</span>`;
           button.addEventListener("click", () => startStage(stage, state.selectedWorld));
           stageGrid.append(button);
@@ -1749,7 +1792,7 @@
           button.className = ["world-tab", active ? "active" : ""].filter(Boolean).join(" ");
           button.setAttribute("role", "tab");
           button.setAttribute("aria-selected", active ? "true" : "false");
-          button.innerHTML = `<span class="world-no">${world.label}</span> <span class="world-rule">${world.ruleLabel} / S${maxUnlockedFor(world.id)} open</span>`;
+          button.innerHTML = `<span class="world-no">${worldShortLabel(world.id)}</span> <span class="world-rule">${world.ruleLabel} / S${maxUnlockedFor(world.id)} open</span>`;
           button.addEventListener("click", () => {
             state.selectedWorld = world.id;
             state.progress.selectedWorld = world.id;
@@ -2167,6 +2210,7 @@
         if (world.rule === "cross") messages.push("上下左右は、行と列のつながりを見よう");
         if (world.rule === "diagonal") messages.push("斜めWORLDは、同じ色のマス同士を意識しよう");
         if (state.world === 4) messages.push("WORLD4は広いぶん、手数は控えめだよ");
+        if (state.world === 5) messages.push("EXTRAは小さい盤面ほど押さない場所も大事だよ");
         if (state.size >= 8) messages.push("大きい盤面は、まず四分割して眺めよう");
         if (remainingMoves() <= 2) messages.push("残り少なめ。押す前に差分を見よう");
         if (state.history.length) messages.push("戻すで1手前から考え直せるよ");
@@ -2271,7 +2315,7 @@
         const hintReady = hintUnlocked();
         const failures = failureCountFor();
         const world = worldConfig();
-        worldValue.textContent = state.world;
+        worldValue.textContent = worldTitleLabel();
         stageValue.textContent = state.stage;
         sizeValue.textContent = `${state.size}x${state.size}`;
         ruleValue.textContent = world.ruleLabel;
@@ -2335,10 +2379,10 @@
         if (type === "clear") {
           const totalStages = totalStagesFor(state.world);
           const hasNext = state.stage < totalStages;
-          resultTitle.textContent = state.stage === totalStages ? "WORLD CLEAR" : state.stage % 5 === 0 && hasNext ? "BOARD UP" : "STAGE CLEAR";
+          resultTitle.textContent = state.stage === totalStages ? state.world === 5 ? "EXTRA CLEAR" : "WORLD CLEAR" : state.stage % 5 === 0 && hasNext ? "BOARD UP" : "STAGE CLEAR";
           resultText.textContent = hasNext
-            ? `WORLD${state.world} S${state.stage}を最短${state.minimumMoves}手でクリア。次はS${state.stage + 1}です。`
-            : `WORLD${state.world}の全ステージクリアです。`;
+            ? `${worldConfig().label} S${state.stage}を最短${state.minimumMoves}手でクリア。次はS${state.stage + 1}です。`
+            : `${worldConfig().label}の全ステージクリアです。`;
           resultPrimaryButton.textContent = hasNext ? "次へ" : "選択へ";
           resultPrimaryButton.onclick = () => {
             if (hasNext) startStage(state.stage + 1, state.world);
