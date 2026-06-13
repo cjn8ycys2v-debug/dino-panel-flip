@@ -385,6 +385,7 @@
     }
 
     .play-screen {
+      position: relative;
       display: grid;
       grid-template-rows: auto 1fr;
       padding: 8px 0 10px;
@@ -489,12 +490,12 @@
       box-shadow: var(--shadow);
     }
 
-    .play-area.intro-tutorial .board-frame {
-      width: min(100%, max(300px, calc(100dvh - 196px)), 610px);
-    }
-
     .tutorial-panel {
-      width: min(100%, 640px);
+      position: fixed;
+      left: var(--tutorial-left, 14px);
+      top: var(--tutorial-top, 14px);
+      z-index: 16;
+      width: min(340px, calc(100vw - 24px));
       min-height: 78px;
       display: grid;
       grid-template-columns: minmax(0, 1fr) auto;
@@ -505,6 +506,16 @@
       border-radius: var(--radius);
       background: rgba(255, 253, 244, 0.94);
       box-shadow: 0 10px 22px rgba(53, 76, 57, 0.12);
+      animation: window-pop 180ms ease both;
+    }
+
+    .tutorial-shade {
+      position: fixed;
+      inset: 0;
+      z-index: 12;
+      background: rgba(18, 37, 32, 0.54);
+      backdrop-filter: blur(1.5px);
+      pointer-events: auto;
     }
 
     .tutorial-copy {
@@ -553,9 +564,18 @@
 
     .tutorial-ui-focus {
       position: relative;
-      z-index: 3;
+      z-index: 14;
       border-radius: var(--radius);
       animation: tutorial-ui-focus 980ms ease-in-out infinite;
+    }
+
+    .play-screen.tutorial-reading .tutorial-ui-focus {
+      pointer-events: none;
+    }
+
+    .play-screen.tutorial-reading .board-frame.tutorial-ui-focus,
+    .play-screen.tutorial-reading .target-section.tutorial-ui-focus {
+      pointer-events: auto;
     }
 
     .board {
@@ -687,6 +707,16 @@
         0 0 14px rgba(79, 159, 217, 0.28);
     }
 
+    .tile.tutorial-settled {
+      filter: saturate(1.18) brightness(1.05);
+      box-shadow:
+        inset 0 0 0 5px rgba(66, 184, 131, 0.96),
+        inset 0 0 0 9px rgba(255, 253, 244, 0.64),
+        inset 0 -5px rgba(0, 0, 0, 0.13),
+        inset 0 4px rgba(255, 255, 255, 0.44),
+        0 0 18px rgba(66, 184, 131, 0.3);
+    }
+
     .tile.tutorial-press {
       animation: tutorial-press-pulse 940ms ease-in-out infinite;
       box-shadow:
@@ -702,8 +732,57 @@
       animation: tile-flip 300ms ease both;
     }
 
+    .play-area.clear-glow .board::after {
+      content: "";
+      position: absolute;
+      inset: -4px;
+      z-index: 4;
+      border-radius: var(--radius);
+      pointer-events: none;
+      background: linear-gradient(115deg, transparent 12%, rgba(255, 253, 244, 0.72) 44%, transparent 70%);
+      transform: translateX(-130%);
+      animation: board-shine 1080ms ease-out both;
+    }
+
     .tile.hint {
       animation: hint-pulse 780ms ease-in-out infinite;
+    }
+
+    .tile.hint-area {
+      box-shadow:
+        inset 0 0 0 4px rgba(248, 197, 55, 0.86),
+        inset 0 -5px rgba(0, 0, 0, 0.13),
+        inset 0 4px rgba(255, 255, 255, 0.44),
+        0 0 14px rgba(248, 197, 55, 0.22);
+    }
+
+    .tile.hint-candidate {
+      box-shadow:
+        inset 0 0 0 4px rgba(79, 159, 217, 0.9),
+        inset 0 0 0 8px rgba(255, 253, 244, 0.58),
+        inset 0 -5px rgba(0, 0, 0, 0.13),
+        inset 0 4px rgba(255, 255, 255, 0.44),
+        0 0 16px rgba(79, 159, 217, 0.24);
+    }
+
+    .tile.hint-confirm {
+      animation: hint-pulse 780ms ease-in-out infinite;
+      box-shadow:
+        inset 0 0 0 5px rgba(66, 184, 131, 0.95),
+        inset 0 0 0 9px rgba(255, 253, 244, 0.62),
+        inset 0 -5px rgba(0, 0, 0, 0.13),
+        inset 0 4px rgba(255, 255, 255, 0.44),
+        0 0 18px rgba(66, 184, 131, 0.28);
+    }
+
+    .tile.hint-answer {
+      animation: tutorial-press-pulse 940ms ease-in-out infinite;
+      box-shadow:
+        inset 0 0 0 5px rgba(240, 100, 73, 0.94),
+        inset 0 0 0 9px rgba(255, 241, 200, 0.78),
+        inset 0 -5px rgba(0, 0, 0, 0.13),
+        inset 0 4px rgba(255, 255, 255, 0.44),
+        0 0 20px rgba(240, 100, 73, 0.3);
     }
 
     .tile.no-touch-hint {
@@ -990,7 +1069,7 @@
     }
 
     .play-area.clear-glow .board-frame {
-      animation: board-win 640ms ease both;
+      animation: board-win 1080ms ease both;
     }
 
     @keyframes tile-flip {
@@ -1136,6 +1215,20 @@
       }
     }
 
+    @keyframes board-shine {
+      0% {
+        opacity: 0;
+        transform: translateX(-130%);
+      }
+      18% {
+        opacity: 0.9;
+      }
+      100% {
+        opacity: 0;
+        transform: translateX(130%);
+      }
+    }
+
     @keyframes confetti-fall {
       0% {
         opacity: 1;
@@ -1250,19 +1343,19 @@
         padding: 8px;
       }
 
-      .play-area.intro-tutorial .board-frame {
-        width: min(100%, max(210px, calc(100dvh - 378px)));
-      }
-
       .board {
         gap: 5px;
       }
 
       .tutorial-panel {
         min-height: 64px;
-        grid-template-columns: minmax(0, 1fr);
+        grid-template-columns: minmax(0, 1fr) 112px;
         gap: 6px;
         padding: 7px 8px;
+      }
+
+      .tutorial-kicker {
+        display: none;
       }
 
       .tutorial-title {
@@ -1275,8 +1368,14 @@
       }
 
       .tutorial-controls {
-        grid-template-columns: auto auto auto;
+        grid-template-columns: 30px 42px 30px;
         justify-content: end;
+        gap: 4px;
+      }
+
+      .tutorial-controls .mini-button {
+        min-height: 26px;
+        padding: 0 4px;
       }
 
       .side-panel {
@@ -1382,6 +1481,144 @@
         padding: 14px;
       }
     }
+
+    @media (max-width: 390px) {
+      .playbar {
+        gap: 5px;
+        min-height: 48px;
+      }
+
+      .icon-button {
+        width: 40px;
+        min-height: 40px;
+        font-size: 1.25rem;
+      }
+
+      .play-title h2 {
+        font-size: 0.92rem;
+      }
+
+      .stage-chip {
+        min-height: 22px;
+        padding: 0 5px;
+        font-size: 0.62rem;
+      }
+
+      .remaining-banner {
+        min-width: 96px;
+        padding: 5px 6px;
+      }
+
+      .remaining-banner span {
+        font-size: 0.6rem;
+      }
+
+      .remaining-banner strong {
+        font-size: 1.35rem;
+      }
+
+      .play-area {
+        gap: 6px;
+      }
+
+      .board-frame {
+        width: min(100%, max(206px, calc(100dvh - 308px)));
+        padding: 7px;
+      }
+
+      .tutorial-panel {
+        grid-template-columns: minmax(0, 1fr) 98px;
+        padding: 6px 7px;
+      }
+
+      .tutorial-title {
+        font-size: 0.76rem;
+      }
+
+      .tutorial-text {
+        font-size: 0.64rem;
+      }
+
+      .tutorial-controls {
+        grid-template-columns: 27px 38px 27px;
+        gap: 3px;
+      }
+
+      .side-panel {
+        grid-template-columns: 102px 1fr;
+        gap: 6px;
+      }
+
+      .target-section,
+      .side-card {
+        padding: 6px;
+      }
+
+      .section-head {
+        gap: 5px;
+        margin-bottom: 5px;
+      }
+
+      .section-head h3 {
+        font-size: 0.84rem;
+      }
+
+      .section-actions {
+        gap: 4px;
+      }
+
+      .target-count {
+        font-size: 0.62rem;
+      }
+
+      .target-board {
+        width: 82px;
+        gap: 3px;
+      }
+
+      .info-grid {
+        gap: 5px;
+      }
+
+      .info-item {
+        min-height: 36px;
+        padding: 4px 5px;
+      }
+
+      .info-label {
+        font-size: 0.54rem;
+      }
+
+      .info-value {
+        font-size: 0.82rem;
+      }
+
+      .tool-row {
+        gap: 5px;
+      }
+
+      .tool-button {
+        min-height: 34px;
+        font-size: 0.68rem;
+      }
+
+      .dino-guide {
+        min-height: 44px;
+        grid-template-columns: 32px minmax(0, 1fr);
+        gap: 6px;
+      }
+
+      .guide-dino {
+        width: 32px;
+      }
+
+      .guide-message {
+        min-height: 32px;
+        padding: 5px 7px;
+        font-size: 0.66rem;
+        line-height: 1.2;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1466,6 +1703,8 @@
           <strong id="remainingValue">0</strong>
         </div>
       </header>
+
+      <div id="tutorialShade" class="tutorial-shade hidden" aria-hidden="true"></div>
 
       <section id="playArea" class="play-area">
         <div class="board-zone">
@@ -1574,13 +1813,13 @@
         { size: 4, moves: 2, kind: "tutorial", solution: [5, 6], note: "2回重なった場所は元に戻る" },
         { size: 4, moves: 2, kind: "tutorial", solution: [0, 15], note: "角は影響できる範囲が少ない" },
         { size: 4, moves: 2, kind: "tutorial", solution: [5, 10], note: "内側2マスの重なりを見てみよう" },
-        { size: 4, moves: 3, kind: "tutorial", solution: [1, 5, 10], note: "押す場所をセットで見る練習" },
-        { size: 5, moves: 3, kind: "tutorial", solution: [6, 8, 18], note: "広くなっても重なりの偶奇が鍵" },
+        { size: 4, moves: 3, kind: "tutorial", solution: [6, 5, 4], note: "端からそろえる考え方の練習" },
+        { size: 5, moves: 3, kind: "tutorial", solution: [6, 8, 18], note: "5x5へ。広くなっても3手から" },
         { size: 5, moves: 4, kind: "tutorial", solution: [0, 4, 20, 24], note: "外側を偶数回にして消す感覚" },
         { size: 5, moves: 4, kind: "normal", note: "角から違うところを減らしていこう" },
         { size: 5, moves: 5, kind: "normal", note: "3x3スタンプを重ねて整える" },
         { size: 5, moves: 6, kind: "normal", note: "5x5の本番、まだ6手まで" },
-        { size: 6, moves: 4, kind: "tutorial", solution: [0, 3, 18, 21], note: "大きい盤面でも小さい形を作れる" },
+        { size: 6, moves: 4, kind: "tutorial", solution: [0, 3, 18, 21], note: "6x6へ。大きい盤面でも小さい形を作れる" },
         { size: 6, moves: 5, kind: "normal", note: "端から確定する練習" },
         { size: 6, moves: 5, kind: "normal", note: "お題と違うマスだけを見てみよう" },
         { size: 6, moves: 6, kind: "normal", note: "押しセットの重なりを読む" },
@@ -1616,13 +1855,13 @@
       const EXTRA_STAGE_CONFIGS = [
         { size: 3, moves: 5, kind: "tutorial", solution: [0, 1, 2, 3, 4], note: "EXTRA開始。お題と違うところをまず見る", friendHint: "左上のあたりを先に見るといいよ。小さい盤面は、端の1マスがかなり大事。" },
         { size: 3, moves: 5, kind: "tutorial", solution: [1, 3, 4, 5, 7], note: "上下左右のつり合いを使う問題です", friendHint: "真ん中を中心に、上下左右をセットで考えてみて。形がきれいなときは、反対側も一緒に見るとラク。" },
-        { size: 3, moves: 6, kind: "tutorial", solution: [0, 1, 2, 3, 5, 6], note: "3x3でも押す場所のまとまりを探そう", friendHint: "上の列と左側を少し強めに見る感じ。全部を一度に見ず、端から決めよう。" },
+        { size: 3, moves: 6, kind: "tutorial", solution: [0, 1, 2, 3, 5, 6], note: "3x3でも押す場所のまとまりを探そう", friendHint: "上端と左側を少し強めに見る感じ。全部を一度に見ず、端から決めよう。" },
         { size: 3, moves: 7, kind: "tutorial", solution: [0, 1, 2, 3, 4, 5, 6], note: "小さい盤面ほど押さない場所もヒント", friendHint: "押す場所が多いね。こういう時は、押さなくてよさそうな2マスを先に探すと見えやすいよ。" },
         { size: 3, moves: 8, kind: "tutorial", solution: [0, 1, 2, 3, 5, 6, 7, 8], note: "対称に読める3x3の高め問題です", friendHint: "真ん中だけ仲間外れにできないか見てみよう。周りをぐるっと押す考え方だよ。" },
         { size: 4, moves: 6, kind: "tutorial", solution: [1, 2, 4, 6, 10, 13], note: "4x4開始。端からじっくり見よう", friendHint: "左上と右上の角を先に見てみて。角を変えられるボタンは近くの4つだけだよ。" },
-        { size: 4, moves: 7, kind: "tutorial", solution: [1, 2, 3, 5, 10, 12, 13], note: "7手問題。角と辺から絞ろう", friendHint: "上の辺に注目。上のマスを変えられる場所は上2行にかたまっているよ。" },
+        { size: 4, moves: 7, kind: "tutorial", solution: [1, 2, 3, 5, 10, 12, 13], note: "7手問題。角と辺から絞ろう", friendHint: "上端に注目。上側を変えられる押し場所は、盤面の上寄りにかたまっているよ。" },
         { size: 4, moves: 8, kind: "tutorial", solution: [0, 2, 3, 4, 6, 10, 12, 15], note: "8手。形のズレを手がかりにしよう", friendHint: "左側と右下を別々に見よう。遠い場所は一気に直そうとしなくて大丈夫。" },
-        { size: 4, moves: 9, kind: "tutorial", solution: [1, 2, 4, 5, 6, 7, 8, 11, 13], note: "9手。横の帯と左右の端が手がかり", friendHint: "2行目をぜんぶ押す形が見えるかも。そこから上の真ん中、左右の端、下の1点を足して考えてみて。" },
+        { size: 4, moves: 9, kind: "tutorial", solution: [1, 2, 4, 5, 6, 7, 8, 11, 13], note: "9手。横の帯と左右の端が手がかり", friendHint: "上寄りの横ラインを大きく使う形が見えるかも。そこから上の真ん中、左右の端、下側の1点を足して考えてみて。" },
         { size: 4, moves: 9, kind: "tutorial", solution: [0, 1, 2, 3, 4, 5, 8, 10, 12], note: "斜めのつり合いで読める9手問題", friendHint: "左上から右下へ、同じ形がないか見てみよう。斜めに似た場所はセットで考えると強いよ。" },
         { size: 5, moves: 7, kind: "tutorial", solution: [0, 7, 11, 14, 15, 22, 24], note: "5x5は見た目の崩れを小分けに見る", friendHint: "左上・中央・右下を分けて見よう。離れた場所は、別々の小さな問題にすると考えやすいよ。" },
         { size: 5, moves: 8, kind: "tutorial", solution: [2, 3, 9, 11, 12, 20, 22, 24], note: "8手。重なって消える場所を探そう", friendHint: "3x3が重なるところは元に戻るよ。残したい場所の外側を、2回さわるように考えてみて。" },
@@ -1631,7 +1870,7 @@
         { size: 5, moves: 9, kind: "tutorial", solution: [2, 3, 5, 9, 11, 12, 14, 17, 19], note: "5x5最終。斜めの流れを追おう", friendHint: "左上から右下へ流れる形を探してみて。斜めに似た場所を一緒に押すと、外側が整いやすいよ。" },
         { size: 6, moves: 8, kind: "tutorial", solution: [5, 6, 10, 15, 20, 24, 25, 27], note: "6x6開始。広い盤面を区切って見よう", friendHint: "左半分と右半分を分けて見よう。遠くのマスまで一気に考えなくて大丈夫。" },
         { size: 6, moves: 9, kind: "tutorial", solution: [11, 15, 17, 20, 21, 29, 31, 32, 34], note: "9手。斜めに似た形を探そう", friendHint: "左上から右下へ鏡みたいに見えるところがあるよ。似た場所をペアにして考えよう。" },
-        { size: 6, moves: 10, kind: "tutorial", solution: [1, 4, 13, 16, 20, 21, 24, 26, 27, 29], note: "10手。左右のつり合いを使う問題", friendHint: "左右で似ている列をセットに見よう。中央の2列は重なりやすいから、最後に合わせるといいよ。" },
+        { size: 6, moves: 10, kind: "tutorial", solution: [1, 4, 13, 16, 20, 21, 24, 26, 27, 29], note: "10手。左右のつり合いを使う問題", friendHint: "左右で似ている縦ラインをセットに見よう。中央寄りは重なりやすいから、最後に合わせるといいよ。" },
         { size: 6, moves: 11, kind: "tutorial", solution: [4, 10, 11, 15, 18, 19, 20, 24, 26, 31, 32], note: "11手。斜めの流れが道しるべです", friendHint: "高めの手数だけど、ちゃんと形があるよ。斜めの線を先に見つけて、端の余りをあとから足そう。" },
         { size: 6, moves: 12, kind: "tutorial", solution: [1, 4, 6, 11, 13, 16, 19, 22, 24, 29, 31, 34], note: "EXTRA最終。対称性で読む12手問題です", friendHint: "左右も上下も似ているよ。片側で考えた押し方を、反対側にも写すつもりで組み立てよう。" }
       ];
@@ -1743,6 +1982,9 @@
       const toolRow = document.querySelector(".tool-row");
       const stageNote = document.querySelector("#stageNote");
       const guideDino = document.querySelector(".guide-dino");
+      const dinoGuide = document.querySelector(".dino-guide");
+      const playTitle = document.querySelector(".play-title");
+      const tutorialShade = document.querySelector("#tutorialShade");
       const tutorialPanel = document.querySelector("#tutorialPanel");
       const tutorialTitle = document.querySelector("#tutorialTitle");
       const tutorialText = document.querySelector("#tutorialText");
@@ -1778,12 +2020,18 @@
         failed: false,
         hoveredIndex: null,
         hintIndices: new Set(),
+        hintHighlights: emptyHintHighlights(),
+        hintMessage: "",
+        hintLevel: 0,
+        hintRevealCount: 0,
+        hintSolutionTotal: 0,
         hintActive: false,
         lastFlipped: new Set(),
         tutorialStep: 0,
         history: [],
         flipTimer: 0,
         failTimer: 0,
+        clearTimer: 0,
         guidePulseTimer: 0,
         audioContext: null
       };
@@ -1919,12 +2167,34 @@
         return failureCountFor() >= HINT_UNLOCK_FAILURES;
       }
 
+      function emptyHintHighlights() {
+        return {
+          area: new Set(),
+          candidate: new Set(),
+          confirm: new Set(),
+          answer: new Set(),
+          noTouch: new Set()
+        };
+      }
+
+      function clearHintState() {
+        state.hintIndices = new Set();
+        state.hintHighlights = emptyHintHighlights();
+        state.hintMessage = "";
+        state.hintLevel = 0;
+        state.hintRevealCount = 0;
+        state.hintSolutionTotal = 0;
+        state.hintActive = false;
+      }
+
       function showScreen(name) {
         state.screen = name;
         menuScreen.classList.toggle("hidden", name !== "menu");
         stageScreen.classList.toggle("hidden", name !== "stage");
         playScreen.classList.toggle("hidden", name !== "play");
         if (name !== "play") {
+          window.clearTimeout(state.clearTimer);
+          state.clearTimer = 0;
           hideTargetOverlay();
           hideTargetHoldOverlay();
         }
@@ -2014,13 +2284,13 @@
         state.completed = false;
         state.failed = false;
         state.hoveredIndex = null;
-        state.hintIndices = new Set();
-        state.hintActive = false;
+        clearHintState();
         state.lastFlipped = new Set();
         state.tutorialStep = 0;
         state.history = [];
         window.clearTimeout(state.flipTimer);
         window.clearTimeout(state.failTimer);
+        window.clearTimeout(state.clearTimer);
         window.clearTimeout(state.guidePulseTimer);
         hideTargetOverlay();
         hideTargetHoldOverlay();
@@ -2268,6 +2538,10 @@
         const tutorialPage = currentIntroTutorialPage();
         const tutorialMove = currentIntroTutorialMove();
         const followsTutorial = tutorialMove === index;
+        if (tutorialMove !== null && !followsTutorial) {
+          setGuideMessage("オレンジの枠のマスを押してみよう。まずは1つずつ動きを見れば大丈夫。");
+          return;
+        }
         unlockAudio();
         playFlipSound();
         const before = state.board.slice();
@@ -2275,8 +2549,7 @@
         state.history.push(before);
         state.moves += 1;
         state.hoveredIndex = null;
-        state.hintIndices = new Set();
-        state.hintActive = false;
+        clearHintState();
         state.lastFlipped = new Set(flipped);
         if (followsTutorial) {
           state.tutorialStep = nextTutorialStepAfterMove(tutorialPage.moveIndex);
@@ -2299,8 +2572,7 @@
         if (!state.history.length || state.completed || state.failed) return;
         state.board = state.history.pop();
         state.moves = Math.max(0, state.moves - 1);
-        state.hintIndices = new Set();
-        state.hintActive = false;
+        clearHintState();
         state.lastFlipped = new Set();
         if (isIntroTutorialStage()) {
           state.tutorialStep = tutorialStepForMoveCount(state.moves);
@@ -2319,11 +2591,11 @@
         state.completed = false;
         state.failed = false;
         state.hoveredIndex = null;
-        state.hintIndices = new Set();
-        state.hintActive = false;
+        clearHintState();
         state.lastFlipped = new Set();
         state.tutorialStep = 0;
         window.clearTimeout(state.failTimer);
+        window.clearTimeout(state.clearTimer);
         window.clearTimeout(state.guidePulseTimer);
         hideTargetOverlay();
         hideTargetHoldOverlay();
@@ -2331,13 +2603,273 @@
         renderPlay();
       }
 
+      function currentSolutionData() {
+        const solution = solveMinimum(state.size, currentDiff(), state.world);
+        const indices = solution
+          ? solution.vector.map((value, index) => value ? index : -1).filter((index) => index >= 0)
+          : [];
+        return { solution, indices };
+      }
+
+      function coordinateList(indices, limit = indices.length) {
+        const shown = indices.slice(0, limit).map(coordinateLabel);
+        const suffix = indices.length > limit ? ` ほか${indices.length - limit}マス` : "";
+        return `${shown.join("、")}${suffix}`;
+      }
+
+      function verticalLabel(row) {
+        if (row === 0) return "上端";
+        if (row === state.size - 1) return "下端";
+        const center = (state.size - 1) / 2;
+        if (state.size % 2 === 1 && row === Math.floor(center)) return "中央";
+        return row < center ? `上から${row + 1}段目` : `下から${state.size - row}段目`;
+      }
+
+      function horizontalLabel(col) {
+        if (col === 0) return "左端";
+        if (col === state.size - 1) return "右端";
+        const center = (state.size - 1) / 2;
+        if (state.size % 2 === 1 && col === Math.floor(center)) return "中央";
+        return col < center ? `左から${col + 1}番目` : `右から${state.size - col}番目`;
+      }
+
+      function coordinateLabel(index) {
+        const row = Math.floor(index / state.size);
+        const col = index % state.size;
+        return `${verticalLabel(row)}・${horizontalLabel(col)}`;
+      }
+
+      function lineLabel(axis, index) {
+        return axis === "row" ? verticalLabel(index) : horizontalLabel(index);
+      }
+
+      function rowIndices(row) {
+        return Array.from({ length: state.size }, (_, col) => row * state.size + col);
+      }
+
+      function colIndices(col) {
+        return Array.from({ length: state.size }, (_, row) => row * state.size + col);
+      }
+
+      function edgeBandIndices() {
+        const indices = [];
+        for (let row = 0; row < state.size; row += 1) {
+          for (let col = 0; col < state.size; col += 1) {
+            if (row === 0 || col === 0 || row === state.size - 1 || col === state.size - 1) {
+              indices.push(row * state.size + col);
+            }
+          }
+        }
+        return indices;
+      }
+
+      function cornerControlIndices() {
+        const points = [
+          [0, 0], [0, state.size - 2],
+          [state.size - 2, 0], [state.size - 2, state.size - 2]
+        ];
+        const indices = new Set();
+        points.forEach(([startRow, startCol]) => {
+          for (let row = startRow; row <= startRow + 1; row += 1) {
+            for (let col = startCol; col <= startCol + 1; col += 1) {
+              if (row >= 0 && row < state.size && col >= 0 && col < state.size) {
+                indices.add(row * state.size + col);
+              }
+            }
+          }
+        });
+        return [...indices];
+      }
+
+      function topHalfIndices() {
+        const end = Math.max(1, Math.ceil(state.size / 2));
+        return Array.from({ length: end * state.size }, (_, index) => index);
+      }
+
+      function bottomHalfIndices() {
+        const start = Math.floor(state.size / 2);
+        const indices = [];
+        for (let row = start; row < state.size; row += 1) indices.push(...rowIndices(row));
+        return indices;
+      }
+
+      function leftHalfIndices() {
+        const end = Math.max(1, Math.ceil(state.size / 2));
+        const indices = [];
+        for (let row = 0; row < state.size; row += 1) {
+          for (let col = 0; col < end; col += 1) indices.push(row * state.size + col);
+        }
+        return indices;
+      }
+
+      function rightHalfIndices() {
+        const start = Math.floor(state.size / 2);
+        const indices = [];
+        for (let row = 0; row < state.size; row += 1) {
+          for (let col = start; col < state.size; col += 1) indices.push(row * state.size + col);
+        }
+        return indices;
+      }
+
+      function countInside(source, area) {
+        const areaSet = new Set(area);
+        return source.reduce((sum, index) => sum + (areaSet.has(index) ? 1 : 0), 0);
+      }
+
+      function strongestHintArea(solutionIndices) {
+        const groups = [
+          { label: "上側", indices: topHalfIndices() },
+          { label: "下側", indices: bottomHalfIndices() },
+          { label: "左側", indices: leftHalfIndices() },
+          { label: "右側", indices: rightHalfIndices() },
+          { label: "外側の辺", indices: edgeBandIndices() }
+        ].map((group) => ({ ...group, count: countInside(solutionIndices, group.indices) }));
+
+        const rowCounts = Array.from({ length: state.size }, (_, row) => ({
+          label: `${lineLabel("row", row)}の横ライン`,
+          indices: rowIndices(row),
+          count: countInside(solutionIndices, rowIndices(row))
+        }));
+        const colCounts = Array.from({ length: state.size }, (_, col) => ({
+          label: `${lineLabel("col", col)}の縦ライン`,
+          indices: colIndices(col),
+          count: countInside(solutionIndices, colIndices(col))
+        }));
+
+        return [...groups, ...rowCounts, ...colCounts]
+          .sort((a, b) => b.count - a.count || a.indices.length - b.indices.length)[0];
+      }
+
+      function ruleHintText() {
+        const world = worldConfig();
+        if (world.rule === "cross") {
+          return "押したマスと上下左右が動くよ。縦横のつながりを見ながら、近いところから直そう。";
+        }
+        if (world.rule === "diagonal") {
+          return "押したマスと斜め4方向が動くよ。ななめに並ぶ場所をセットで見ると考えやすいよ。";
+        }
+        return "押したマスのまわりも動くよ。重なった場所は2回ひっくり返って元に戻るよ。";
+      }
+
+      function buildNormalHint(level, solutionData) {
+        const highlights = emptyHintHighlights();
+        const { indices } = solutionData;
+        if (!indices.length) {
+          return { text: "今の形はもう押す場所がないみたい。お題と同じか確認してみて。", highlights };
+        }
+
+        if (level === 1) {
+          highlights.area = new Set(edgeBandIndices());
+          return {
+            text: `ヒント1/4：${ruleHintText()}`,
+            highlights
+          };
+        }
+
+        if (level === 2) {
+          const area = strongestHintArea(indices);
+          highlights.area = new Set(area.indices);
+          return {
+            text: `ヒント2/4：${area.label}に注目してみよう。ここに押す場所が${area.count}つありそう。`,
+            highlights
+          };
+        }
+
+        if (level === 3) {
+          const first = indices[0];
+          highlights.area = new Set(getAffectedIndices(first));
+          highlights.confirm = new Set([first]);
+          return {
+            text: `ヒント3/4：まず${coordinateLabel(first)}を押してみよう。黄色い範囲が一緒に動くよ。`,
+            highlights
+          };
+        }
+
+        highlights.answer = new Set(indices);
+        return {
+          text: `答え表示：赤く光る${indices.length}マスが押す場所。押す順番は自由だよ。`,
+          highlights
+        };
+      }
+
+      function buildExtraHint(level, solutionData) {
+        const highlights = emptyHintHighlights();
+        const { indices } = solutionData;
+        if (!indices.length) {
+          return { text: "今の形はもう押す場所がないみたい。完成していないか見てみよう。", highlights };
+        }
+
+        if (level === 1) {
+          highlights.area = new Set(edgeBandIndices());
+          const heavy = indices.length > state.size * state.size * 0.45;
+          return {
+            text: heavy
+              ? "ヒント1/5：押す場所が多い問題だよ。押す場所だけでなく、押さない場所も見てみよう。"
+              : "ヒント1/5：中央から急いで押さず、角と辺から候補をしぼってみよう。",
+            highlights
+          };
+        }
+
+        if (level === 2) {
+          highlights.candidate = new Set(cornerControlIndices());
+          return {
+            text: "ヒント2/5：角に影響できる押し場所は近くの4マスだけ。四隅の条件から少しずつ決めよう。",
+            highlights
+          };
+        }
+
+        if (level === 3) {
+          const area = strongestHintArea(indices);
+          highlights.area = new Set(area.indices);
+          return {
+            text: `ヒント3/5：押す場所は${area.label}に${area.count}つ。盤面全体を一気に見ず、そこを軸に考えよう。`,
+            highlights
+          };
+        }
+
+        if (level === 4) {
+          const count = Math.min(3, Math.max(1, Math.floor(indices.length / 3)));
+          const partial = indices.slice(0, count);
+          highlights.confirm = new Set(partial);
+          return {
+            text: `ヒント4/5：ここは押す場所で確定。${coordinateList(partial)}。まだ全部ではないよ。`,
+            highlights
+          };
+        }
+
+        const revealCount = Math.min(Math.max(1, state.hintRevealCount), indices.length);
+        const revealed = indices.slice(0, revealCount);
+        highlights.answer = new Set(revealed);
+        return {
+          text: revealCount >= indices.length
+            ? `解法確認：赤く光る${indices.length}マスが押す場所。順番は自由だよ。`
+            : `解法確認 ${revealCount}/${indices.length}：${coordinateLabel(indices[revealCount - 1])}は押す場所。さらに押すと次を出すよ。`,
+          highlights
+        };
+      }
+
       function showHint() {
         if (state.completed || state.failed || remainingMoves() <= 0 || !hintUnlocked()) return;
-        const solution = solveMinimum(state.size, currentDiff(), state.world);
-        const untouched = solution
-          ? solution.vector.map((value, index) => value ? -1 : index).filter((index) => index >= 0)
-          : [];
-        state.hintIndices = new Set(untouched);
+        const solutionData = currentSolutionData();
+        const maxLevel = state.world === 5 ? 5 : 4;
+
+        if (state.hintLevel < maxLevel) {
+          state.hintLevel += 1;
+          if (state.world === 5 && state.hintLevel === maxLevel) state.hintRevealCount = 1;
+        } else if (state.world === 5) {
+          state.hintRevealCount = Math.min(solutionData.indices.length, state.hintRevealCount + 1);
+        } else {
+          state.hintRevealCount = solutionData.indices.length;
+        }
+
+        state.hintSolutionTotal = solutionData.indices.length;
+        const hint = state.world === 5
+          ? buildExtraHint(state.hintLevel, solutionData)
+          : buildNormalHint(state.hintLevel, solutionData);
+
+        state.hintHighlights = hint.highlights;
+        state.hintIndices = hint.highlights.noTouch;
+        state.hintMessage = hint.text;
         state.hintActive = true;
         renderPlay();
       }
@@ -2351,7 +2883,10 @@
         }
         playClearSound();
         celebrate();
-        showResult("clear");
+        window.clearTimeout(state.clearTimer);
+        state.clearTimer = window.setTimeout(() => {
+          if (state.completed && state.screen === "play") showResult("clear");
+        }, 1250);
       }
 
       function failStage() {
@@ -2392,8 +2927,17 @@
         return {
           title: `${coordinateLabel(move)}を押してみよう`,
           text: `${lead} オレンジの枠が押す場所、青く光る${affectedCount}マスがひっくり返る場所だよ。`,
+          focus: "board",
           moveIndex
         };
+      }
+
+      function tutorialSettledIndices(move) {
+        const preview = state.board.slice();
+        flipAt(preview, move, state.size, state.world);
+        return preview
+          .map((value, index) => value === state.target[index] && state.board[index] !== state.target[index] ? index : -1)
+          .filter((index) => index >= 0);
       }
 
       function introTutorialPages() {
@@ -2403,16 +2947,49 @@
         if (state.stage === 1) {
           return [
             {
-              title: "目的：右のお題と同じ形にしよう",
-              text: "左の大きな盤面が今の状態。右の「お題」がゴールだよ。",
-              focus: "target",
-              moveIndex: 0
+              title: "ステージ情報はここ",
+              text: "WORLD、STAGE、盤面サイズ、反転ルールをここで見られるよ。このステージは4x4で9マス反転。",
+              focus: "title"
             },
             {
               title: "残り手数を見よう",
-              text: "上の数字は、あと何回押せるか。0になる前にお題と同じにしよう。",
-              focus: "remaining",
-              moveIndex: 0
+              text: "この数字は、あと何回押せるか。0になる前にお題と同じ形にしよう。",
+              focus: "remaining"
+            },
+            {
+              title: "大きな盤面を操作するよ",
+              text: "ここが今の盤面。パネルを押すと、緑とたまご模様が入れ替わるよ。",
+              focus: "board"
+            },
+            {
+              title: "「お題」がゴールだよ",
+              text: "この小さい盤面と同じ形にできたらクリア。スマホではお題を長押しすると、盤面に重ねて見比べられるよ。",
+              focus: "target",
+            },
+            {
+              title: "ルール：押すと9マスが変わる",
+              text: "WORLD1では、押したマスとそのまわり8マス、合わせて9マスがひっくり返るよ。",
+              focus: "board"
+            },
+            {
+              title: "お題の横の数字も見よう",
+              text: "「10 / 16」みたいな数字は、お題と同じになっているパネル数だよ。",
+              focus: "target"
+            },
+            {
+              title: "時間・手数・最短の見方",
+              text: "「手数」は今押した回数。「最短」はクリアに必要な一番少ない回数だよ。",
+              focus: "info"
+            },
+            {
+              title: "ボタンの見方",
+              text: "「戻す」は1手戻す。「ヒント」は10回チャレンジ後。「リトライ」は最初からやり直しだよ。",
+              focus: "tools"
+            },
+            {
+              title: "恐竜くんが時々しゃべるよ",
+              text: "ここにはちょっとしたコツが出るよ。10回チャレンジ後は、もっと具体的な考え方も話してくれる。",
+              focus: "guide"
             },
             introMovePage(0, "まずは1手だけ。押したマスのまわりも一緒に変わるよ。")
           ];
@@ -2420,11 +2997,6 @@
 
         if (state.stage === 2) {
           return [
-            {
-              title: "ルール：押すとまわりも変わる",
-              text: "WORLD1では、押したマスとそのまわり8マス、合わせて9マスがひっくり返るよ。",
-              moveIndex: 0
-            },
             introMovePage(0, "1つ目の押す場所を見てみよう。"),
             introMovePage(1, "2つ目。青い範囲どうしが重なる場所は、2回ひっくり返って元に戻るよ。")
           ];
@@ -2432,12 +3004,6 @@
 
         if (state.stage === 3) {
           return [
-            {
-              title: "お題の横の数字も見よう",
-              text: "「10 / 16」みたいな数字は、お題と同じになっているパネル数だよ。",
-              focus: "target",
-              moveIndex: 0
-            },
             introMovePage(0, "角を押すと、動く範囲は4マスだけ。端や角は考える手がかりになるよ。"),
             introMovePage(1, "反対側の角も見てみよう。角は広がりすぎないから、動きが分かりやすいね。")
           ];
@@ -2445,28 +3011,44 @@
 
         if (state.stage === 4) {
           return [
-            {
-              title: "時間・手数・最短の見方",
-              text: "「手数」は今押した回数。「最短」はクリアに必要な一番少ない回数だよ。",
-              focus: "info",
-              moveIndex: 0
-            },
             introMovePage(0, "内側を押すと、9マスが大きく動くよ。"),
             introMovePage(1, "2つの内側を押すと、重なったところだけ動きが消えるよ。")
           ];
         }
 
+        if (state.stage === 5) {
+          return [
+            {
+              title: "端からそろえる練習",
+              text: "端のパネルは、あとから触れる押し場所が少ないよ。だから先に端を決めると、考える場所がぐっと減る。",
+              focus: "board"
+            },
+            {
+              title: "まず右端をそろえる",
+              text: "右端をまとめてお題に近づけたいから、右寄りの内側を選ぶよ。緑に光る場所が、この手でお題と同じになるパネル。",
+              focus: "board",
+              moveIndex: 0
+            },
+            {
+              title: "そろえた右端を守る",
+              text: "次は少し左を選ぶよ。ここなら右端に触らないので、さっきそろえた端を崩さず中央だけを直せる。",
+              focus: "board",
+              moveIndex: 1
+            },
+            {
+              title: "最後に残った左側を閉じる",
+              text: "残ったズレは左側だけ。左寄りを選ぶと、右端を守ったまま残りがそろって完成するよ。",
+              focus: "board",
+              moveIndex: 2
+            }
+          ];
+        }
+
         return [
-          {
-            title: "ボタンの見方",
-            text: "「戻す」は1手戻す。「ヒント」は10回チャレンジ後。「リトライ」は最初からやり直しだよ。",
-            focus: "tools",
-            moveIndex: 0
-          },
           {
             title: "押す順番は自由だよ",
             text: "このゲームは、同じ場所を押すか押さないかが大事。順番はあとで決めても大丈夫。",
-            moveIndex: 0
+            focus: "board"
           },
           introMovePage(0, "ここから3手。まず1つ目の押す場所を見よう。"),
           introMovePage(1, "2つ目。青い範囲の重なり方を見ながら押してみよう。"),
@@ -2488,24 +3070,70 @@
         return moves[page.moveIndex] ?? null;
       }
 
-      function coordinateLabel(index) {
-        return `${Math.floor(index / state.size) + 1}行${index % state.size + 1}列`;
+      function tutorialFocusElement(focus) {
+        const focusMap = {
+          title: playTitle,
+          board: boardFrameEl,
+          remaining: remainingBanner,
+          target: targetSection,
+          info: infoGrid,
+          tools: toolRow,
+          guide: dinoGuide
+        };
+        return focusMap[focus] || null;
       }
 
       function clearTutorialFocus() {
-        [remainingBanner, targetSection, infoGrid, toolRow].forEach((element) => {
+        [playTitle, boardFrameEl, remainingBanner, targetSection, infoGrid, toolRow, dinoGuide].forEach((element) => {
           element.classList.remove("tutorial-ui-focus");
         });
       }
 
       function applyTutorialFocus(focus) {
-        const focusMap = {
-          remaining: remainingBanner,
-          target: targetSection,
-          info: infoGrid,
-          tools: toolRow
+        const element = tutorialFocusElement(focus);
+        if (element) element.classList.add("tutorial-ui-focus");
+        return element;
+      }
+
+      function clampPanelPosition(value, min, max) {
+        if (max < min) return min;
+        return Math.min(Math.max(value, min), max);
+      }
+
+      function positionTutorialPanel(focusElement) {
+        if (!focusElement || tutorialPanel.classList.contains("hidden")) return;
+        const targetRect = focusElement.getBoundingClientRect();
+        const panelRect = tutorialPanel.getBoundingClientRect();
+        const viewport = window.visualViewport;
+        const bounds = {
+          left: viewport ? viewport.offsetLeft : 0,
+          top: viewport ? viewport.offsetTop : 0,
+          width: viewport ? viewport.width : window.innerWidth,
+          height: viewport ? viewport.height : window.innerHeight
         };
-        if (focusMap[focus]) focusMap[focus].classList.add("tutorial-ui-focus");
+        const margin = bounds.width <= 390 ? 8 : 12;
+        const maxLeft = bounds.left + bounds.width - panelRect.width - margin;
+        const maxTop = bounds.top + bounds.height - panelRect.height - margin;
+        const rightLeft = targetRect.right + margin;
+        const leftLeft = targetRect.left - panelRect.width - margin;
+        let left = rightLeft;
+        let top = targetRect.top + (targetRect.height - panelRect.height) / 2;
+
+        if (rightLeft + panelRect.width > bounds.left + bounds.width - margin) {
+          left = leftLeft;
+        }
+
+        if (left < bounds.left + margin) {
+          left = targetRect.left + targetRect.width / 2 - panelRect.width / 2;
+          const belowTop = targetRect.bottom + margin;
+          const aboveTop = targetRect.top - panelRect.height - margin;
+          top = belowTop + panelRect.height <= bounds.top + bounds.height - margin
+            ? belowTop
+            : aboveTop;
+        }
+
+        tutorialPanel.style.setProperty("--tutorial-left", `${clampPanelPosition(left, bounds.left + margin, maxLeft)}px`);
+        tutorialPanel.style.setProperty("--tutorial-top", `${clampPanelPosition(top, bounds.top + margin, maxTop)}px`);
       }
 
       function nextTutorialStepAfterMove(moveIndex) {
@@ -2533,27 +3161,33 @@
         const pages = introTutorialPages();
         const active = pages.length > 0 && !state.completed && !state.failed;
         playArea.classList.toggle("intro-tutorial", active);
+        playScreen.classList.toggle("tutorial-active", active);
         tutorialPanel.classList.toggle("hidden", !active);
+        tutorialShade.classList.toggle("hidden", !active);
         clearTutorialFocus();
-        if (!active) return;
+        if (!active) {
+          playScreen.classList.remove("tutorial-reading");
+          return;
+        }
 
         state.tutorialStep = Math.min(Math.max(0, state.tutorialStep), pages.length - 1);
         const page = pages[state.tutorialStep];
-        applyTutorialFocus(page.focus);
+        const focus = page.focus || (typeof page.moveIndex === "number" ? "board" : "board");
+        const focusElement = applyTutorialFocus(focus);
+        playScreen.classList.toggle("tutorial-reading", typeof page.moveIndex !== "number");
         tutorialTitle.textContent = page.title;
         tutorialText.textContent = page.text;
         tutorialStepValue.textContent = `${state.tutorialStep + 1} / ${pages.length}`;
         tutorialPrevButton.disabled = state.tutorialStep === 0;
-        tutorialNextButton.disabled = state.tutorialStep >= pages.length - 1;
+        tutorialNextButton.disabled = state.tutorialStep >= pages.length - 1 || typeof page.moveIndex === "number";
+        window.requestAnimationFrame(() => positionTutorialPanel(focusElement));
       }
 
       function currentGuideMessage() {
         if (state.completed) return "きれいにそろいました";
         if (state.failed) return "点滅している場所を見てみて。そこがお題と違うパネルだよ";
         if (state.hintActive) {
-          return state.hintIndices.size
-            ? "青く光るところは、今回は押さなくていい場所だよ"
-            : "この状態だと、押さなくていい場所はないみたい";
+          return state.hintMessage || "ヒントを表示したよ。光っている場所を見てみよう。";
         }
 
         const messages = guideMessages();
@@ -2568,19 +3202,20 @@
       }
 
       function detailedGuideHint() {
-        const config = stageConfig(state.stage, state.world);
-        if (config.friendHint) return `チャッ友ヒント：${config.friendHint}`;
         const world = worldConfig();
+        if (state.world === 5) {
+          return "恐竜くんヒント：EXTRAはすぐ答えを見せないよ。まず辺や角から、押す候補をしぼってみよう。";
+        }
         if (world.rule === "cross") {
-          return "チャッ友ヒント：上下左右だけが動くよ。まず1つの行か列にしぼって、そこから直してみよう。";
+          return "恐竜くんヒント：上下左右だけが動くよ。まず縦か横のつながりを1つ選んで、そこから直してみよう。";
         }
         if (world.rule === "diagonal") {
-          return "チャッ友ヒント：斜めの4方向が動くよ。同じ色のマスがななめに並んでいないか見てみよう。";
+          return "恐竜くんヒント：斜めの4方向が動くよ。同じ色のマスがななめに並んでいないか見てみよう。";
         }
         if (state.size >= 8) {
-          return "チャッ友ヒント：広い盤面は、左上・右上・左下・右下に分けると急に見やすくなるよ。";
+          return "恐竜くんヒント：広い盤面は、左上・右上・左下・右下に分けると急に見やすくなるよ。";
         }
-        return "チャッ友ヒント：まず角を見てみよう。角を変えられるボタンは近くの4つだけだから、かなり絞れるよ。";
+        return "恐竜くんヒント：まず角を見てみよう。角を変えられるボタンは近くの4つだけだから、かなり絞れるよ。";
       }
 
       function guideMessages() {
@@ -2593,12 +3228,14 @@
         ];
 
         if (!hintUnlocked()) {
-          messages.push(`あと${HINT_UNLOCK_FAILURES - failureCountFor()}回チャレンジで、チャッ友ヒントが出るよ`);
+          messages.push(`あと${HINT_UNLOCK_FAILURES - failureCountFor()}回チャレンジで、恐竜くんヒントが出るよ`);
         } else {
           messages.push(detailedGuideHint());
-          messages.push("ヒントボタンを押すと、押さなくていい場所が青く光るよ");
+          messages.push(state.world === 5
+            ? "ヒントボタンは少しずつ深くなるよ。EXTRAは考える余地を残して出すよ"
+            : "ヒントボタンを押すと、考え方から答え表示まで少しずつ進むよ");
         }
-        if (world.rule === "cross") messages.push("上下左右は、行と列のつながりを見よう");
+        if (world.rule === "cross") messages.push("上下左右は、縦横のつながりを見よう");
         if (world.rule === "diagonal") messages.push("斜めWORLDは、同じ色のマス同士を意識しよう");
         if (state.world === 4) messages.push("WORLD4は広いぶん、手数は控えめだよ");
         if (state.world === 5) messages.push("EXTRAは、押す場所の形を見つけると楽しいよ");
@@ -2638,10 +3275,15 @@
         const affected = !supportsHoverPreview || state.hoveredIndex === null
           ? new Set()
           : new Set(getAffectedIndices(state.hoveredIndex));
+        const tutorialPage = currentIntroTutorialPage();
+        const tutorialReadOnly = tutorialPage && typeof tutorialPage.moveIndex !== "number";
         const tutorialMove = currentIntroTutorialMove();
         const tutorialAffected = tutorialMove === null
           ? new Set()
           : new Set(getAffectedIndices(tutorialMove, state.size, state.world));
+        const tutorialSettled = tutorialMove === null
+          ? new Set()
+          : new Set(tutorialSettledIndices(tutorialMove));
 
         state.board.forEach((value, index) => {
           const tile = document.createElement("button");
@@ -2651,13 +3293,18 @@
             `state-${value}`,
             affected.has(index) ? "affected" : "",
             tutorialAffected.has(index) ? "tutorial-affected" : "",
+            tutorialSettled.has(index) ? "tutorial-settled" : "",
             tutorialMove === index ? "tutorial-press" : "",
             state.lastFlipped.has(index) ? "flipped" : "",
+            state.hintHighlights.area.has(index) ? "hint-area" : "",
+            state.hintHighlights.candidate.has(index) ? "hint-candidate" : "",
+            state.hintHighlights.confirm.has(index) ? "hint-confirm" : "",
+            state.hintHighlights.answer.has(index) ? "hint-answer" : "",
             state.hintIndices.has(index) ? "no-touch-hint" : "",
             state.failed && value !== state.target[index] ? "mismatch" : ""
           ].filter(Boolean).join(" ");
-          tile.setAttribute("aria-label", `行${Math.floor(index / state.size) + 1} 列${index % state.size + 1}`);
-          tile.disabled = state.completed || state.failed;
+          tile.setAttribute("aria-label", coordinateLabel(index));
+          tile.disabled = state.completed || state.failed || tutorialReadOnly;
           tile.addEventListener("click", () => performMove(index));
           if (supportsHoverPreview) {
             tile.addEventListener("mouseenter", () => {
@@ -2708,6 +3355,20 @@
         container.append(tile);
       }
 
+      function hintButtonLabel(failures, hintReady) {
+        if (!hintReady) return `ヒント${Math.min(failures, HINT_UNLOCK_FAILURES)}/10`;
+        if (!state.hintLevel) return "ヒント";
+        if (state.world === 5) {
+          if (state.hintLevel < 5) return `さらに${state.hintLevel}/5`;
+          if (state.hintSolutionTotal && state.hintRevealCount < state.hintSolutionTotal) {
+            return `解法${state.hintRevealCount}/${state.hintSolutionTotal}`;
+          }
+          return "解法確認";
+        }
+        if (state.hintLevel < 4) return `さらに${state.hintLevel}/4`;
+        return "答え表示";
+      }
+
       function renderInfo() {
         const hintReady = hintUnlocked();
         const failures = failureCountFor();
@@ -2724,9 +3385,11 @@
         remainingBanner.classList.toggle("warning", !state.completed && !state.failed && remainingMoves() <= 2);
         undoButton.disabled = !state.history.length || state.completed || state.failed;
         hintButton.disabled = state.completed || state.failed || remainingMoves() <= 0 || !hintReady;
-        hintButton.textContent = hintReady ? "ヒント" : `ヒント${Math.min(failures, HINT_UNLOCK_FAILURES)}/10`;
+        hintButton.textContent = hintButtonLabel(failures, hintReady);
         hintButton.title = hintReady
-          ? "答えで押さないパネルをすべて表示"
+          ? state.world === 5
+            ? "EXTRA用の段階ヒントを少しずつ表示"
+            : "通常ステージ用の段階ヒントを表示"
           : `${HINT_UNLOCK_FAILURES}回チャレンジするとヒントが使えます`;
         setGuideMessage(currentGuideMessage());
       }
@@ -2788,7 +3451,7 @@
         } else {
           resultTitle.textContent = "LIMIT OVER";
           resultText.textContent = hintUnlocked()
-            ? "ヒントが使えるようになりました。点滅していた場所を、お題と見比べてみて。"
+            ? "段階ヒントが使えるようになりました。点滅していた場所を、お題と見比べてみて。"
             : `点滅していた場所を、お題と見比べてみて。ヒントまであと${HINT_UNLOCK_FAILURES - failureCountFor()}回チャレンジ。`;
           resultPrimaryButton.textContent = "リトライ";
           resultPrimaryButton.onclick = retryStage;
@@ -2799,6 +3462,8 @@
       function hideResult() {
         window.clearTimeout(state.failTimer);
         state.failTimer = 0;
+        window.clearTimeout(state.clearTimer);
+        state.clearTimer = 0;
         window.clearTimeout(state.guidePulseTimer);
         stageNote.classList.remove("speaking");
         guideDino.classList.remove("speaking");
@@ -2973,7 +3638,20 @@
 
       window.addEventListener("resize", () => {
         if (!targetHoldOverlayEl.classList.contains("hidden")) syncTargetHoldOverlayBounds();
+        const page = currentIntroTutorialPage();
+        if (page) positionTutorialPanel(tutorialFocusElement(page.focus || "board"));
       });
+
+      if (window.visualViewport) {
+        window.visualViewport.addEventListener("resize", () => {
+          const page = currentIntroTutorialPage();
+          if (page) positionTutorialPanel(tutorialFocusElement(page.focus || "board"));
+        });
+        window.visualViewport.addEventListener("scroll", () => {
+          const page = currentIntroTutorialPage();
+          if (page) positionTutorialPanel(tutorialFocusElement(page.focus || "board"));
+        });
+      }
 
       window.setInterval(() => {
         if (state.screen === "play" && !state.completed && !state.failed) renderInfo();
