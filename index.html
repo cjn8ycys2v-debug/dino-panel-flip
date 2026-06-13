@@ -475,6 +475,7 @@
     }
 
     .board-frame {
+      position: relative;
       width: min(100%, calc(100dvh - 104px), 640px);
       aspect-ratio: 1;
       padding: clamp(8px, 1.6vw, 14px);
@@ -487,11 +488,43 @@
     }
 
     .board {
+      position: relative;
+      z-index: 1;
       display: grid;
       grid-template-columns: repeat(var(--size), minmax(0, 1fr));
       gap: clamp(5px, 1vw, 9px);
       width: 100%;
       height: 100%;
+    }
+
+    .board-target-overlay {
+      position: absolute;
+      z-index: 6;
+      margin: 0;
+      pointer-events: none;
+      opacity: 1;
+      transform: scale(1);
+      filter: drop-shadow(0 0 14px rgba(79, 159, 217, 0.28));
+    }
+
+    .board-target-overlay .tile {
+      cursor: default;
+      opacity: 0.74;
+      box-shadow:
+        inset 0 0 0 3px rgba(255, 255, 255, 0.72),
+        inset 0 0 0 6px rgba(79, 159, 217, 0.44),
+        inset 0 -5px rgba(0, 0, 0, 0.11),
+        0 0 16px rgba(79, 159, 217, 0.2);
+    }
+
+    .board-target-overlay .tile.target-match {
+      opacity: 0.32;
+      filter: saturate(0.88);
+    }
+
+    .board-target-overlay .tile.target-diff {
+      opacity: 0.9;
+      animation: target-compare-pulse 760ms ease-in-out infinite;
     }
 
     .tile {
@@ -668,6 +701,9 @@
       width: min(100%, 220px);
       aspect-ratio: 1;
       margin: 0 auto;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
     }
 
     .info-grid {
@@ -930,6 +966,16 @@
           inset 0 -5px rgba(0, 0, 0, 0.13),
           inset 0 4px rgba(255, 255, 255, 0.44),
           0 7px 0 rgba(53, 76, 57, 0.18);
+      }
+    }
+
+    @keyframes target-compare-pulse {
+      0%,
+      100% {
+        filter: saturate(1.04) brightness(1.02);
+      }
+      50% {
+        filter: saturate(1.22) brightness(1.08);
       }
     }
 
@@ -1265,6 +1311,7 @@
         <div class="board-zone">
           <div class="board-frame">
             <div id="board" class="board" aria-label="現在の盤面"></div>
+            <div id="targetHoldOverlay" class="board board-target-overlay hidden" aria-hidden="true"></div>
           </div>
         </div>
 
@@ -1463,7 +1510,9 @@
       const unlockedSummary = document.querySelector("#unlockedSummary");
       const backToStagesButton = document.querySelector("#backToStagesButton");
       const boardEl = document.querySelector("#board");
+      const boardFrameEl = document.querySelector(".board-frame");
       const targetBoardEl = document.querySelector("#targetBoard");
+      const targetHoldOverlayEl = document.querySelector("#targetHoldOverlay");
       const targetZoomButton = document.querySelector("#targetZoomButton");
       const targetOverlay = document.querySelector("#targetOverlay");
       const targetZoomBoardEl = document.querySelector("#targetZoomBoard");
@@ -1649,7 +1698,10 @@
         menuScreen.classList.toggle("hidden", name !== "menu");
         stageScreen.classList.toggle("hidden", name !== "stage");
         playScreen.classList.toggle("hidden", name !== "play");
-        if (name !== "play") hideTargetOverlay();
+        if (name !== "play") {
+          hideTargetOverlay();
+          hideTargetHoldOverlay();
+        }
         if (name === "menu") renderMenu();
         if (name === "stage") renderStageSelect();
       }
@@ -1743,6 +1795,7 @@
         window.clearTimeout(state.failTimer);
         window.clearTimeout(state.guidePulseTimer);
         hideTargetOverlay();
+        hideTargetHoldOverlay();
         hideResult();
         renderPlay();
       }
@@ -2030,6 +2083,7 @@
         window.clearTimeout(state.failTimer);
         window.clearTimeout(state.guidePulseTimer);
         hideTargetOverlay();
+        hideTargetHoldOverlay();
         hideResult();
         renderPlay();
       }
@@ -2139,9 +2193,11 @@
       function renderBoards() {
         boardEl.style.setProperty("--size", state.size);
         targetBoardEl.style.setProperty("--size", state.size);
+        targetHoldOverlayEl.style.setProperty("--size", state.size);
         targetZoomBoardEl.style.setProperty("--size", state.size);
         boardEl.textContent = "";
         targetBoardEl.textContent = "";
+        targetHoldOverlayEl.textContent = "";
         targetZoomBoardEl.textContent = "";
 
         const affected = !supportsHoverPreview || state.hoveredIndex === null
@@ -2188,18 +2244,25 @@
         });
 
         state.target.forEach((value, index) => {
-          renderTargetTile(targetBoardEl, value, index);
-          renderTargetTile(targetZoomBoardEl, value, index);
+          renderTargetTile(targetBoardEl, value, index, { mini: true });
+          renderTargetTile(targetHoldOverlayEl, value, index, { hold: true });
+          renderTargetTile(targetZoomBoardEl, value, index, { mini: true });
         });
+
+        if (!targetHoldOverlayEl.classList.contains("hidden")) syncTargetHoldOverlayBounds();
       }
 
-      function renderTargetTile(container, value, index) {
+      function renderTargetTile(container, value, index, options = {}) {
+        const isDiff = value !== state.board[index];
         const tile = document.createElement("div");
         tile.className = [
           "tile",
-          "tile-mini",
+          options.mini ? "tile-mini" : "",
+          options.hold ? "tile-hold" : "",
           `state-${value}`,
-          state.failed && value !== state.board[index] ? "mismatch" : ""
+          options.hold && isDiff ? "target-diff" : "",
+          options.hold && !isDiff ? "target-match" : "",
+          state.failed && isDiff ? "mismatch" : ""
         ].filter(Boolean).join(" ");
         container.append(tile);
       }
@@ -2237,6 +2300,32 @@
 
       function hideTargetOverlay() {
         targetOverlay.classList.add("hidden");
+      }
+
+      function syncTargetHoldOverlayBounds() {
+        const boardRect = boardEl.getBoundingClientRect();
+        const frameRect = boardFrameEl.getBoundingClientRect();
+        targetHoldOverlayEl.style.left = `${boardRect.left - frameRect.left}px`;
+        targetHoldOverlayEl.style.top = `${boardRect.top - frameRect.top}px`;
+        targetHoldOverlayEl.style.width = `${boardRect.width}px`;
+        targetHoldOverlayEl.style.height = `${boardRect.height}px`;
+      }
+
+      function showTargetHoldOverlay(event) {
+        if (state.screen !== "play" || state.completed || state.failed) return;
+        if (event) {
+          if (event.pointerType === "mouse" && event.button !== 0) return;
+          event.preventDefault();
+          if (targetBoardEl.setPointerCapture && event.pointerId !== undefined) {
+            targetBoardEl.setPointerCapture(event.pointerId);
+          }
+        }
+        syncTargetHoldOverlayBounds();
+        targetHoldOverlayEl.classList.remove("hidden");
+      }
+
+      function hideTargetHoldOverlay() {
+        targetHoldOverlayEl.classList.add("hidden");
       }
 
       function showResult(type) {
@@ -2404,6 +2493,14 @@
       targetOverlay.addEventListener("click", (event) => {
         if (event.target === targetOverlay) hideTargetOverlay();
       });
+      targetBoardEl.addEventListener("pointerdown", showTargetHoldOverlay);
+      targetBoardEl.addEventListener("pointerup", hideTargetHoldOverlay);
+      targetBoardEl.addEventListener("pointercancel", hideTargetHoldOverlay);
+      targetBoardEl.addEventListener("lostpointercapture", hideTargetHoldOverlay);
+      targetBoardEl.addEventListener("pointerleave", (event) => {
+        if (event.pointerType === "mouse") hideTargetHoldOverlay();
+      });
+      targetBoardEl.addEventListener("contextmenu", (event) => event.preventDefault());
       resetProgressButton.addEventListener("click", () => {
         state.progress = defaultProgress(1);
         state.world = 1;
@@ -2422,6 +2519,10 @@
           if (!targetOverlay.classList.contains("hidden")) hideTargetOverlay();
           else showScreen("stage");
         }
+      });
+
+      window.addEventListener("resize", () => {
+        if (!targetHoldOverlayEl.classList.contains("hidden")) syncTargetHoldOverlayBounds();
       });
 
       window.setInterval(() => {
