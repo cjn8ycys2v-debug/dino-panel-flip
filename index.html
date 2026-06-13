@@ -1809,70 +1809,70 @@
   <script>
     (() => {
       const STAGE_CONFIGS = [
-        { size: 4, moves: 1, kind: "tutorial", solution: [5], note: "まず見る。つぎ押す。えらい。" },
-        { size: 4, moves: 2, kind: "tutorial", solution: [5, 6], note: "2回めくると戻るよ。ふしぎ。" },
-        { size: 4, moves: 2, kind: "tutorial", solution: [0, 15], note: "角から見ると、頭が助かる。" },
-        { size: 4, moves: 2, kind: "tutorial", solution: [5, 10], note: "2手だけど、ちょっと考えるやつ。" },
-        { size: 4, moves: 3, kind: "tutorial", solution: [6, 5, 4], note: "端からそろえよ。端、まじめ。" },
-        { size: 5, moves: 3, kind: "tutorial", solution: [6, 8, 18], note: "広くなったけど3手。まだやさしい顔。" },
-        { size: 5, moves: 4, kind: "tutorial", solution: [0, 4, 20, 24], note: "まとまりを見つけると、うれしい。" },
-        { size: 5, moves: 4, kind: "normal", note: "ここから自力感。お茶ほしい。" },
-        { size: 5, moves: 5, kind: "normal", note: "いつもの力でいけるやつ。" },
-        { size: 5, moves: 6, kind: "normal", note: "5x5のしめ。ゆっくりで勝ち。" },
-        { size: 6, moves: 4, kind: "tutorial", solution: [0, 3, 18, 21], note: "6x6だけど肩ならし。首もならす。" },
-        { size: 6, moves: 5, kind: "normal", note: "端を見よう。端はしゃべる。" },
-        { size: 6, moves: 5, kind: "normal", note: "小分けに見れば、なんとかなる顔。" },
-        { size: 6, moves: 6, kind: "normal", note: "本番きた。深呼吸、すぅ。" },
-        { size: 6, moves: 6, kind: "normal", note: "形で考えよ。手はあと。" },
-        { size: 7, moves: 5, kind: "normal", note: "広いね。目が散歩する。" },
-        { size: 7, moves: 5, kind: "normal", note: "押すセットを探そ。順番は寝てる。" },
-        { size: 7, moves: 6, kind: "normal", note: "重なりを使おう。2回でなかったこと。" },
-        { size: 7, moves: 6, kind: "normal", note: "大きく包んで、いらないとこ消そ。" },
-        { size: 7, moves: 7, kind: "normal", note: "ラストだよ。しっぽ立てていこ。" }
+        { size: 4, moves: 1, kind: "tutorial", solution: [5], note: "まずは画面の見方からいこう。あわてなくて大丈夫だよ。" },
+        { size: 4, moves: 2, kind: "tutorial", solution: [5, 6], note: "2回ひっくり返ると元に戻るよ。ここ、けっこう大事。" },
+        { size: 4, moves: 2, kind: "tutorial", solution: [0, 15], note: "角のパネルは動かせる場所が少ないんだ。まず角を見てみよう。" },
+        { size: 4, moves: 2, kind: "tutorial", solution: [5, 10], note: "たった2手だけど、重なり方をちょっと考える問題だよ。" },
+        { size: 4, moves: 3, kind: "tutorial", solution: [6, 5, 4], note: "端からそろえる練習だよ。右や左の列を先に見てみよう。" },
+        { size: 5, moves: 3, kind: "tutorial", solution: [6, 8, 18], note: "盤面が広くなったね。でも3手だから、落ち着いて見ればいけるよ。" },
+        { size: 5, moves: 4, kind: "tutorial", solution: [0, 4, 20, 24], note: "大きな形が見えたらチャンス。まとまりで見てみよう。" },
+        { size: 5, moves: 4, kind: "normal", note: "ここから少し自分で考える感じだよ。いい調子。" },
+        { size: 5, moves: 5, kind: "normal", note: "ふつうの問題って感じ。今までの考え方を使ってみよう。" },
+        { size: 5, moves: 6, kind: "normal", note: "5x5の仕上げだよ。押す場所をまとめて想像してみよう。" },
+        { size: 6, moves: 4, kind: "tutorial", solution: [0, 3, 18, 21], note: "6x6に広がったけど、今回は少なめの手数だよ。肩ならしだね。" },
+        { size: 6, moves: 5, kind: "normal", note: "端のパネルから考える練習だよ。端はヒントが多いんだ。" },
+        { size: 6, moves: 5, kind: "normal", note: "ちょっと難しくなってきたね。お題を小さく分けて見よう。" },
+        { size: 6, moves: 6, kind: "normal", note: "6x6の本番だよ。押す場所ぜんぶを先に想像するとラク。" },
+        { size: 6, moves: 6, kind: "normal", note: "これはしっかり難しいよ。1手ずつより、形で考えてみよう。" },
+        { size: 7, moves: 5, kind: "normal", note: "7x7は広いね。まず見る場所をしぼるのがコツだよ。" },
+        { size: 7, moves: 5, kind: "normal", note: "どこを押すか、セットで考えてみよう。順番は気にしなくていいよ。" },
+        { size: 7, moves: 6, kind: "normal", note: "2回さわる場所は元に戻るよ。重なりを味方にしよう。" },
+        { size: 7, moves: 6, kind: "normal", note: "大きい3x3を重ねて、いらないところを消していこう。" },
+        { size: 7, moves: 7, kind: "normal", note: "WORLDのしめくくりだよ。ここまで来たなら、じっくりいける。" }
       ];
       const WORLD4_STAGE_CONFIGS = [
-        { size: 8, moves: 5, kind: "tutorial", solution: [10, 20, 21, 22, 24], note: "8x8だ。広い。おおきい。" },
-        { size: 8, moves: 5, kind: "tutorial", solution: [18, 27, 29, 30, 37], note: "分けて見よう。ぜんぶ見ると目が丸い。" },
-        { size: 8, moves: 5, kind: "tutorial", solution: [1, 3, 23, 45, 53], note: "端がカギ。端、いい仕事する。" },
-        { size: 8, moves: 5, kind: "tutorial", solution: [2, 25, 30, 53, 57], note: "離れてても、別々に考えればいいよ。" },
-        { size: 8, moves: 6, kind: "tutorial", solution: [5, 9, 15, 20, 30, 36], note: "6手だよ。押す前に、見る。" },
-        { size: 8, moves: 6, kind: "tutorial", solution: [30, 31, 32, 36, 43, 48], note: "横ラインがにおう。たぶん。" },
-        { size: 8, moves: 6, kind: "tutorial", solution: [2, 29, 31, 43, 45, 61], note: "端と中央を分けよ。えらい作戦。" },
-        { size: 8, moves: 7, kind: "tutorial", solution: [1, 8, 10, 13, 19, 23, 40], note: "7手きた。あわてると床を見る。" },
-        { size: 8, moves: 7, kind: "tutorial", solution: [4, 39, 42, 47, 52, 54, 63], note: "外側からいこう。外、落ち着く。" },
-        { size: 8, moves: 7, kind: "tutorial", solution: [3, 10, 32, 37, 49, 51, 62], note: "8x8仕上げ。大きく分けて、小さく勝つ。" },
-        { size: 9, moves: 5, kind: "tutorial", solution: [13, 31, 40, 49, 67], note: "9x9だよ。でも5手。こわくない顔。" },
-        { size: 9, moves: 5, kind: "tutorial", solution: [4, 22, 40, 58, 76], note: "縦に見よう。まっすぐは正義。" },
-        { size: 9, moves: 5, kind: "tutorial", solution: [18, 26, 40, 54, 62], note: "左右が似てるかも。鏡っぽい。" },
-        { size: 9, moves: 6, kind: "tutorial", solution: [2, 14, 30, 50, 66, 78], note: "真ん中を見ると、少し安心。" },
-        { size: 9, moves: 6, kind: "tutorial", solution: [3, 23, 38, 39, 62, 72], note: "形がちょい崩れ。そこが味。" },
-        { size: 9, moves: 6, kind: "tutorial", solution: [9, 17, 27, 53, 63, 71], note: "端と中央、べつべつ弁当。" },
-        { size: 9, moves: 7, kind: "tutorial", solution: [3, 6, 35, 41, 72, 74, 76], note: "まとまり探し。宝探しっぽい。" },
-        { size: 9, moves: 7, kind: "tutorial", solution: [16, 37, 42, 50, 52, 63, 76], note: "先に押す場所を並べよ。頭の中で。" },
-        { size: 9, moves: 8, kind: "tutorial", solution: [1, 4, 23, 30, 40, 57, 60, 70], note: "大物だよ。目を細めると見えるかも。" },
-        { size: 9, moves: 8, kind: "tutorial", solution: [15, 18, 21, 55, 56, 62, 74, 80], note: "ラスト。むずいけど、形はいる。" }
+        { size: 8, moves: 5, kind: "tutorial", solution: [10, 20, 21, 22, 24], note: "8x8だよ。広いけど5手だけ。まず場所を区切って見よう。" },
+        { size: 8, moves: 5, kind: "tutorial", solution: [18, 27, 29, 30, 37], note: "ぜんぶ一気に見なくていいよ。小さなかたまりに分けよう。" },
+        { size: 8, moves: 5, kind: "tutorial", solution: [1, 3, 23, 45, 53], note: "端の動きが大事な問題だよ。角の近くをよく見てみよう。" },
+        { size: 8, moves: 5, kind: "tutorial", solution: [2, 25, 30, 53, 57], note: "離れた場所が出てくるね。別々の小問題として考えるといいよ。" },
+        { size: 8, moves: 6, kind: "tutorial", solution: [5, 9, 15, 20, 30, 36], note: "ここから6手。押す前に、お題をじっくり見てからいこう。" },
+        { size: 8, moves: 6, kind: "tutorial", solution: [30, 31, 32, 36, 43, 48], note: "横に並ぶ形が見えるかも。横ラインを意識してみよう。" },
+        { size: 8, moves: 6, kind: "tutorial", solution: [2, 29, 31, 43, 45, 61], note: "6手だけど、ちょっと手ごわいよ。端と中央を分けて見よう。" },
+        { size: 8, moves: 7, kind: "tutorial", solution: [1, 8, 10, 13, 19, 23, 40], note: "7手に入ったね。あわてて押さず、押す場所を先に探そう。" },
+        { size: 8, moves: 7, kind: "tutorial", solution: [4, 39, 42, 47, 52, 54, 63], note: "広い盤面は端から。外側を先に見ると整理しやすいよ。" },
+        { size: 8, moves: 7, kind: "tutorial", solution: [3, 10, 32, 37, 49, 51, 62], note: "8x8の仕上げだよ。大きく区切って、少しずつ詰めよう。" },
+        { size: 9, moves: 5, kind: "tutorial", solution: [13, 31, 40, 49, 67], note: "9x9になったよ。でも5手だから、こわがらなくて大丈夫。" },
+        { size: 9, moves: 5, kind: "tutorial", solution: [4, 22, 40, 58, 76], note: "縦に並ぶ形が見えそう。まっすぐのラインを探してみよう。" },
+        { size: 9, moves: 5, kind: "tutorial", solution: [18, 26, 40, 54, 62], note: "左右の似ているところを見てみよう。形がかなり助けてくれるよ。" },
+        { size: 9, moves: 6, kind: "tutorial", solution: [2, 14, 30, 50, 66, 78], note: "中央を基準に見ると迷いにくいよ。まず真ん中あたりから。" },
+        { size: 9, moves: 6, kind: "tutorial", solution: [3, 23, 38, 39, 62, 72], note: "少し形がくずれてるね。似ている場所を探して整えよう。" },
+        { size: 9, moves: 6, kind: "tutorial", solution: [9, 17, 27, 53, 63, 71], note: "端と中央を別々に考えよう。広い時ほど分けるのがコツ。" },
+        { size: 9, moves: 7, kind: "tutorial", solution: [3, 6, 35, 41, 72, 74, 76], note: "7手問題だよ。押す場所のまとまりを見つけたいね。" },
+        { size: 9, moves: 7, kind: "tutorial", solution: [16, 37, 42, 50, 52, 63, 76], note: "ここは慎重にいこう。押す場所を先に頭の中で並べてみよう。" },
+        { size: 9, moves: 8, kind: "tutorial", solution: [1, 4, 23, 30, 40, 57, 60, 70], note: "8手の大物だよ。広く見すぎず、区切って考えよう。" },
+        { size: 9, moves: 8, kind: "tutorial", solution: [15, 18, 21, 55, 56, 62, 74, 80], note: "WORLD4ラスト。むずかしいけど、ちゃんと形はあるよ。" }
       ];
       const EXTRA_STAGE_CONFIGS = [
-        { size: 3, moves: 5, kind: "tutorial", solution: [0, 1, 2, 3, 4], note: "EXTRAだよ。小さいのに強い。", friendHint: "左上のあたりを先に見るといいよ。小さい盤面は、端の1マスがかなり大事。" },
-        { size: 3, moves: 5, kind: "tutorial", solution: [1, 3, 4, 5, 7], note: "真ん中見よう。真ん中、えらそう。", friendHint: "真ん中を中心に、上下左右をセットで考えてみて。形がきれいなときは、反対側も一緒に見るとラク。" },
-        { size: 3, moves: 6, kind: "tutorial", solution: [0, 1, 2, 3, 5, 6], note: "端から決めよ。1マスが重い。", friendHint: "上端と左側を少し強めに見る感じ。全部を一度に見ず、端から決めよう。" },
-        { size: 3, moves: 7, kind: "tutorial", solution: [0, 1, 2, 3, 4, 5, 6], note: "押さない場所、探すのも手。", friendHint: "押す場所が多いね。こういう時は、押さなくてよさそうな2マスを先に探すと見えやすいよ。" },
-        { size: 3, moves: 8, kind: "tutorial", solution: [0, 1, 2, 3, 5, 6, 7, 8], note: "ぐるっと見るやつ。首もぐるっと。", friendHint: "真ん中だけ仲間外れにできないか見てみよう。周りをぐるっと押す考え方だよ。" },
-        { size: 4, moves: 6, kind: "tutorial", solution: [1, 2, 4, 6, 10, 13], note: "4x4開始。角と端から、そろり。", friendHint: "左上と右上の角を先に見てみて。角を変えられるボタンは近くの4つだけだよ。" },
-        { size: 4, moves: 7, kind: "tutorial", solution: [1, 2, 3, 5, 10, 12, 13], note: "上のほう、なんかある。", friendHint: "上端に注目。上側を変えられる押し場所は、盤面の上寄りにかたまっているよ。" },
-        { size: 4, moves: 8, kind: "tutorial", solution: [0, 2, 3, 4, 6, 10, 12, 15], note: "左と右下、別々に見よう。", friendHint: "左側と右下を別々に見よう。遠い場所は一気に直そうとしなくて大丈夫。" },
-        { size: 4, moves: 9, kind: "tutorial", solution: [1, 2, 4, 5, 6, 7, 8, 11, 13], note: "横の帯がカギ。帯、しぶい。", friendHint: "上寄りの横ラインを大きく使う形が見えるかも。そこから上の真ん中、左右の端、下側の1点を足して考えてみて。" },
-        { size: 4, moves: 9, kind: "tutorial", solution: [0, 1, 2, 3, 4, 5, 8, 10, 12], note: "斜めが似てるかも。ななめ仲間。", friendHint: "左上から右下へ、同じ形がないか見てみよう。斜めに似た場所はセットで考えると強いよ。" },
-        { size: 5, moves: 7, kind: "tutorial", solution: [0, 7, 11, 14, 15, 22, 24], note: "遠い場所は別件で。", friendHint: "左上・中央・右下を分けて見よう。離れた場所は、別々の小さな問題にすると考えやすいよ。" },
-        { size: 5, moves: 8, kind: "tutorial", solution: [2, 3, 9, 11, 12, 20, 22, 24], note: "2回さわると消える。便利。", friendHint: "3x3が重なるところは元に戻るよ。残したい場所の外側を、2回さわるように考えてみて。" },
-        { size: 5, moves: 9, kind: "tutorial", solution: [6, 7, 8, 11, 12, 13, 16, 17, 18], note: "真ん中のかたまり、どーん。", friendHint: "真ん中の3x3をまとめて押す形だよ。まず中央だけを大きなかたまりとして見てみよう。" },
-        { size: 5, moves: 9, kind: "tutorial", solution: [4, 5, 7, 12, 13, 14, 16, 17, 21], note: "左右を見比べよう。鏡ごっこ。", friendHint: "左と右で似ているところをセットにしよう。真ん中の列は最後に合わせるくらいでOK。" },
-        { size: 5, moves: 9, kind: "tutorial", solution: [2, 3, 5, 9, 11, 12, 14, 17, 19], note: "斜めの流れを追う。すいー。", friendHint: "左上から右下へ流れる形を探してみて。斜めに似た場所を一緒に押すと、外側が整いやすいよ。" },
-        { size: 6, moves: 8, kind: "tutorial", solution: [5, 6, 10, 15, 20, 24, 25, 27], note: "半分ずつ見れば、目が平和。", friendHint: "左半分と右半分を分けて見よう。遠くのマスまで一気に考えなくて大丈夫。" },
-        { size: 6, moves: 9, kind: "tutorial", solution: [11, 15, 17, 20, 21, 29, 31, 32, 34], note: "斜めペアを探そ。ペアは安心。", friendHint: "左上から右下へ鏡みたいに見えるところがあるよ。似た場所をペアにして考えよう。" },
-        { size: 6, moves: 10, kind: "tutorial", solution: [1, 4, 13, 16, 20, 21, 24, 26, 27, 29], note: "かなり強い。こっちも強い顔。", friendHint: "左右で似ている縦ラインをセットに見よう。中央寄りは重なりやすいから、最後に合わせるといいよ。" },
-        { size: 6, moves: 11, kind: "tutorial", solution: [4, 10, 11, 15, 18, 19, 20, 24, 26, 31, 32], note: "線を見つけて、端を足す。料理っぽい。", friendHint: "高めの手数だけど、ちゃんと形があるよ。斜めの線を先に見つけて、端の余りをあとから足そう。" },
-        { size: 6, moves: 12, kind: "tutorial", solution: [1, 4, 6, 11, 13, 16, 19, 22, 24, 29, 31, 34], note: "最後だよ。似た形を写して、どん。", friendHint: "左右も上下も似ているよ。片側で考えた押し方を、反対側にも写すつもりで組み立てよう。" }
+        { size: 3, moves: 5, kind: "tutorial", solution: [0, 1, 2, 3, 4], note: "EXTRAへようこそ。小さい盤面だけど、もう油断できないよ。", friendHint: "左上のあたりを先に見るといいよ。小さい盤面は、端の1マスがかなり大事。" },
+        { size: 3, moves: 5, kind: "tutorial", solution: [1, 3, 4, 5, 7], note: "真ん中とまわりのつり合いを見てみよう。きれいな形がヒント。", friendHint: "真ん中を中心に、上下左右をセットで考えてみて。形がきれいなときは、反対側も一緒に見るとラク。" },
+        { size: 3, moves: 6, kind: "tutorial", solution: [0, 1, 2, 3, 5, 6], note: "端から少しずつ決めよう。小さいほど1マスが大きいんだ。", friendHint: "上端と左側を少し強めに見る感じ。全部を一度に見ず、端から決めよう。" },
+        { size: 3, moves: 7, kind: "tutorial", solution: [0, 1, 2, 3, 4, 5, 6], note: "押す場所が多いね。押さない場所を探すのもアリだよ。", friendHint: "押す場所が多いね。こういう時は、押さなくてよさそうな2マスを先に探すと見えやすいよ。" },
+        { size: 3, moves: 8, kind: "tutorial", solution: [0, 1, 2, 3, 5, 6, 7, 8], note: "まわりをぐるっと見る問題だよ。真ん中との関係を考えてみよう。", friendHint: "真ん中だけ仲間外れにできないか見てみよう。周りをぐるっと押す考え方だよ。" },
+        { size: 4, moves: 6, kind: "tutorial", solution: [1, 2, 4, 6, 10, 13], note: "4x4に入ったよ。まず角と端から、ゆっくり見よう。", friendHint: "左上と右上の角を先に見てみて。角を変えられるボタンは近くの4つだけだよ。" },
+        { size: 4, moves: 7, kind: "tutorial", solution: [1, 2, 3, 5, 10, 12, 13], note: "上のほうに手がかりがありそう。端の並びをよく見てね。", friendHint: "上端に注目。上側を変えられる押し場所は、盤面の上寄りにかたまっているよ。" },
+        { size: 4, moves: 8, kind: "tutorial", solution: [0, 2, 3, 4, 6, 10, 12, 15], note: "左側と右下を分けて考えると、少し見えやすいよ。", friendHint: "左側と右下を別々に見よう。遠い場所は一気に直そうとしなくて大丈夫。" },
+        { size: 4, moves: 9, kind: "tutorial", solution: [1, 2, 4, 5, 6, 7, 8, 11, 13], note: "横の帯がカギだよ。上の真ん中と左右の端を見てみよう。", friendHint: "上寄りの横ラインを大きく使う形が見えるかも。そこから上の真ん中、左右の端、下側の1点を足して考えてみて。" },
+        { size: 4, moves: 9, kind: "tutorial", solution: [0, 1, 2, 3, 4, 5, 8, 10, 12], note: "斜めに似た形があるかも。セットで見ると強いよ。", friendHint: "左上から右下へ、同じ形がないか見てみよう。斜めに似た場所はセットで考えると強いよ。" },
+        { size: 5, moves: 7, kind: "tutorial", solution: [0, 7, 11, 14, 15, 22, 24], note: "5x5のEXTRAだよ。遠い場所は別々に考えていいよ。", friendHint: "左上・中央・右下を分けて見よう。離れた場所は、別々の小さな問題にすると考えやすいよ。" },
+        { size: 5, moves: 8, kind: "tutorial", solution: [2, 3, 9, 11, 12, 20, 22, 24], note: "重なって消える場所を探そう。2回さわるところがポイント。", friendHint: "3x3が重なるところは元に戻るよ。残したい場所の外側を、2回さわるように考えてみて。" },
+        { size: 5, moves: 9, kind: "tutorial", solution: [6, 7, 8, 11, 12, 13, 16, 17, 18], note: "中央のかたまりが見えるね。まず真ん中を大きく見よう。", friendHint: "真ん中の3x3をまとめて押す形だよ。まず中央だけを大きなかたまりとして見てみよう。" },
+        { size: 5, moves: 9, kind: "tutorial", solution: [4, 5, 7, 12, 13, 14, 16, 17, 21], note: "左右で似ている場所を探そう。真ん中はあとで整える感じ。", friendHint: "左と右で似ているところをセットにしよう。真ん中の列は最後に合わせるくらいでOK。" },
+        { size: 5, moves: 9, kind: "tutorial", solution: [2, 3, 5, 9, 11, 12, 14, 17, 19], note: "斜めの流れを追ってみよう。外側がそろう瞬間があるよ。", friendHint: "左上から右下へ流れる形を探してみて。斜めに似た場所を一緒に押すと、外側が整いやすいよ。" },
+        { size: 6, moves: 8, kind: "tutorial", solution: [5, 6, 10, 15, 20, 24, 25, 27], note: "6x6だけど、見る場所を半分ずつに分ければ大丈夫。", friendHint: "左半分と右半分を分けて見よう。遠くのマスまで一気に考えなくて大丈夫。" },
+        { size: 6, moves: 9, kind: "tutorial", solution: [11, 15, 17, 20, 21, 29, 31, 32, 34], note: "斜めに似た形が隠れてるよ。ペアを探してみよう。", friendHint: "左上から右下へ鏡みたいに見えるところがあるよ。似た場所をペアにして考えよう。" },
+        { size: 6, moves: 10, kind: "tutorial", solution: [1, 4, 13, 16, 20, 21, 24, 26, 27, 29], note: "かなり手ごわいよ。でも左右の形を見れば道がある。", friendHint: "左右で似ている縦ラインをセットに見よう。中央寄りは重なりやすいから、最後に合わせるといいよ。" },
+        { size: 6, moves: 11, kind: "tutorial", solution: [4, 10, 11, 15, 18, 19, 20, 24, 26, 31, 32], note: "高めの手数だね。斜めの線を見つけて、端をあとから足そう。", friendHint: "高めの手数だけど、ちゃんと形があるよ。斜めの線を先に見つけて、端の余りをあとから足そう。" },
+        { size: 6, moves: 12, kind: "tutorial", solution: [1, 4, 6, 11, 13, 16, 19, 22, 24, 29, 31, 34], note: "EXTRAラスト。左右と上下の似ている形を写すように考えよう。", friendHint: "左右も上下も似ているよ。片側で考えた押し方を、反対側にも写すつもりで組み立てよう。" }
       ];
       const WORLD_CONFIGS = [
         {
@@ -3095,6 +3095,9 @@
         if (state.hintActive) {
           return state.hintMessage || "ヒントを表示したよ。光っている場所を見てみよう。";
         }
+        if (state.moves > 0 && remainingMoves() === 1) {
+          return "残り1手だよ。押す前に、お題と今の盤面を見比べよう。";
+        }
 
         const messages = guideMessages();
         const tick = Math.floor(elapsedSeconds() / GUIDE_INTERVAL_SECONDS);
@@ -3128,11 +3131,12 @@
         const world = worldConfig();
         const config = stageConfig(state.stage, state.world);
         const messages = [
-          `このWORLDは、${world.ruleText}するよ`,
           config.note,
-          ...GUIDE_TIPS
+          `このWORLDは、${world.ruleText}するよ`
         ];
 
+        if (remainingMoves() <= 2) messages.push("残り少なめ。押す前にお題と見比べよう");
+        if (state.history.length) messages.push("戻すで1手前から考え直せるよ");
         if (!hintUnlocked()) {
           messages.push(`あと${HINT_UNLOCK_FAILURES - failureCountFor()}回チャレンジで、恐竜くんヒントが出るよ`);
         } else {
@@ -3146,9 +3150,8 @@
         if (state.world === 4) messages.push("WORLD4は広いぶん、手数は控えめだよ");
         if (state.world === 5) messages.push("EXTRAは、押す場所の形を見つけると楽しいよ");
         if (state.size >= 8) messages.push("大きい盤面は、まず四分割して眺めよう");
-        if (remainingMoves() <= 2) messages.push("残り少なめ。押す前にお題と見比べよう");
-        if (state.history.length) messages.push("戻すで1手前から考え直せるよ");
         if (state.size >= 5) messages.push("広い盤面は端から見ると楽だよ");
+        messages.push(...GUIDE_TIPS);
 
         return [...new Set(messages)];
       }
